@@ -1,0 +1,539 @@
+[[bin]]
+name = "ini"
+path = "fuzz_targets/ini.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "rasn"
+path = "fuzz_targets/rasn.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "raven_uxn"
+path = "fuzz_targets/raven_uxn.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ron"
+path = "fuzz_targets/ron.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "rustc_demangle"
+path = "fuzz_targets/rustc_demangle.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "semver"
+path = "fuzz_targets/semver.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "serde_yaml_from_slice"
+path = "fuzz_targets/serde_yaml_from_slice.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "serde_yaml_from_str"
+path = "fuzz_targets/serde_yaml_from_str.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "serde_yaml_to_string"
+path = "fuzz_targets/serde_yaml_to_string.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "simple_asn1"
+path = "fuzz_targets/simple_asn1.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "snap"
+path = "fuzz_targets/snap.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "soroban_compare"
+path = "fuzz_targets/soroban_compare.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "soroban_try_from_val"
+path = "fuzz_targets/soroban_try_from_val.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "sqlformat"
+path = "fuzz_targets/sqlformat.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "sqlparser"
+path = "fuzz_targets/sqlparser.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ssh_keys"
+path = "fuzz_targets/ssh_keys.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ssh_parser"
+path = "fuzz_targets/ssh_parser.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "swf_parser"
+path = "fuzz_targets/swf_parser.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symbolic_demangle"
+path = "fuzz_targets/symbolic_demangle.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symbolic_from_slice"
+path = "fuzz_targets/symbolic_from_slice.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symbolic_parse_with_limit"
+path = "fuzz_targets/symbolic_parse_with_limit.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia"
+path = "fuzz_targets/symphonia.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "tera"
+path = "fuzz_targets/tera.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "syn"
+path = "fuzz_targets/syn.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "rasn_der_encode_fuzz"
+path = "fuzz_targets/rasn_der_encode_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "rasn_der_decode_fuzz"
+path = "fuzz_targets/rasn_der_decode_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "raven_uxn_ram_UxnRam_new_fuzz"
+path = "fuzz_targets/raven_uxn_ram_UxnRam_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "raven_uxn_Uxn_reset_fuzz"
+path = "fuzz_targets/raven_uxn_Uxn_reset_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "raven_uxn_Uxn_new_fuzz"
+path = "fuzz_targets/raven_uxn_Uxn_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symbolic_demangle_demangle_fuzz"
+path = "fuzz_targets/symbolic_demangle_demangle_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "simple_asn1_from_der_fuzz"
+path = "fuzz_targets/simple_asn1_from_der_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "semver_version_req_parse_fuzz"
+path = "fuzz_targets/semver_version_req_parse_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ron_de_from_str_fuzz"
+path = "fuzz_targets/ron_de_from_str_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ron_ser_to_string_fuzz"
+path = "fuzz_targets/ron_ser_to_string_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symbolic_common_byteview_from_slice_fuzz"
+path = "fuzz_targets/symbolic_common_byteview_from_slice_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia_core_formats_default_track_fuzz"
+path = "fuzz_targets/symphonia_core_formats_default_track_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia_core_formats_next_packet_fuzz"
+path = "fuzz_targets/symphonia_core_formats_next_packet_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia_core_probe_Probe_format_fuzz"
+path = "fuzz_targets/symphonia_core_probe_Probe_format_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia_core_io_media_source_stream_media_source_stream_new_fuzz"
+path = "fuzz_targets/symphonia_core_io_media_source_stream_media_source_stream_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia_core_probe_hint_new_fuzz"
+path = "fuzz_targets/symphonia_core_probe_hint_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia_core_codecs_codec_registry_make_fuzz"
+path = "fuzz_targets/symphonia_core_codecs_codec_registry_make_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia_core_codecs_decode_fuzz"
+path = "fuzz_targets/symphonia_core_codecs_decode_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia_default_get_probe_fuzz"
+path = "fuzz_targets/symphonia_default_get_probe_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symphonia_default_get_codecs_fuzz"
+path = "fuzz_targets/symphonia_default_get_codecs_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "soroban_env_common_env_val_try_from_val_fuzz"
+path = "fuzz_targets/soroban_env_common_env_val_try_from_val_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "soroban_env_common_compare_compare_fuzz"
+path = "fuzz_targets/soroban_env_common_compare_compare_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "serde_yaml_de_from_str_fuzz"
+path = "fuzz_targets/serde_yaml_de_from_str_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "serde_yaml_de_from_slice_fuzz"
+path = "fuzz_targets/serde_yaml_de_from_slice_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "tera_tera_Tera_one_off_fuzz"
+path = "fuzz_targets/tera_tera_Tera_one_off_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "rustc_demangle_demangle_fuzz"
+path = "fuzz_targets/rustc_demangle_demangle_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "snap_decompress_Decoder_new_fuzz"
+path = "fuzz_targets/snap_decompress_Decoder_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "snap_decompress_Decoder_decompress_vec_fuzz"
+path = "fuzz_targets/snap_decompress_Decoder_decompress_vec_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "swf_parser_streaming_movie_parse_movie_fuzz"
+path = "fuzz_targets/swf_parser_streaming_movie_parse_movie_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ssh_parser_ssh_parse_ssh_packet_fuzz"
+path = "fuzz_targets/ssh_parser_ssh_parse_ssh_packet_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "sqlparser_parser_parse_sql_fuzz"
+path = "fuzz_targets/sqlparser_parser_parse_sql_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "syn_parse_str_fuzz"
+path = "fuzz_targets/syn_parse_str_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ini_Ini_read_from_fuzz"
+path = "fuzz_targets/ini_Ini_read_from_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "unified_diff_diff_fuzz"
+path = "fuzz_targets/unified_diff_diff_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ssh_keys_openssh_parse_private_key_fuzz"
+path = "fuzz_targets/ssh_keys_openssh_parse_private_key_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "sqlformat_format_fuzz"
+path = "fuzz_targets/sqlformat_format_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "symbolic_unreal_container_parse_with_limit_fuzz"
+path = "fuzz_targets/symbolic_unreal_container_parse_with_limit_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[package]
+name = "crate_batch_5-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[dependencies]
+libfuzzer-sys = "0.4"
+semver = "0.9.0"
+serde = "1.0"
+serde_yaml = "0.8.3"
+der-parser = "10.0.0"
+minidump = "0.22.0"
+minidump-processor = "0.22.0"
+minidump-unwind = "0.22.0"
+symbolic-minidump = "=8.5.0"
+unified-diff = "0.2.0"
+
+[dev-dependencies]
+
+[target]
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies.arbitrary]
+version = "1.3.0"
+features = [ "derive",]
+
+[dependencies.rasn]
+git = "https://github.com/librasn/rasn"
+rev = "d9a9219"
+
+[dependencies.ron]
+git = "https://github.com/ron-rs/ron"
+rev = "caf55ce"
+
+[dependencies.rust-ini]
+git = "https://github.com/zonyitoo/rust-ini"
+rev = "8d5a92f"
+
+[dependencies.rustc-demangle]
+git = "https://github.com/rust-lang/rustc-demangle"
+rev = "48646c6"
+
+[dependencies.simple_asn1]
+git = "https://github.com/acw/simple_asn1"
+rev = "b72f384"
+
+[dependencies.snap]
+git = "https://github.com/BurntSushi/rust-snappy"
+rev = "025b88b"
+
+[dependencies.soroban-env-host]
+git = "https://github.com/stellar/rs-soroban-env"
+rev = "2ceaad2"
+
+[dependencies.soroban-env-common]
+git = "https://github.com/stellar/rs-soroban-env"
+rev = "2ceaad2"
+
+[dependencies.sqlparser]
+git = "https://github.com/apache/datafusion-sqlparser-rs"
+rev = "35ef0ee"
+
+[dependencies.ssh-keys]
+git = "https://github.com/tailhook/ssh-keys"
+rev = "36fe530"
+
+[dependencies.ssh-parser]
+git = "https://github.com/rusticata/ssh-parser"
+rev = "5f197b9"
+
+[dependencies.swf-parser]
+git = "https://github.com/open-flash/swf-parser"
+rev = "3993499"
+
+[dependencies.symbolic]
+package = "symbolic"
+git = "https://github.com/getsentry/symbolic"
+rev = "af3e580"
+features = [ "demangle", "unreal",]
+
+[dependencies.symphonia]
+git = "https://github.com/pdeljanov/Symphonia"
+rev = "c75a08d"
+features = [ "aac",]
+
+[dependencies.syn_188]
+package = "syn"
+git = "https://github.com/dtolnay/syn"
+rev = "132bca5"
+
+[dependencies.tera_190]
+package = "tera"
+git = "https://github.com/Keats/tera"
+rev = "5495105"
+
+[dependencies.sqlformat]
+git = "https://github.com/shssoichiro/sqlformat-rs"
+rev = "62c7110"
+
+[dependencies.raven-uxn]
+git = "https://github.com/mkeeter/raven"
+rev = "4a6c08f"
+
+[dependencies.crate_batch_5]
+path = ".."
+
+[dependencies.sequoia-openpgp]
+git = "https://gitlab.com/sequoia-pgp/sequoia"
+rev = "adcbb3fd"

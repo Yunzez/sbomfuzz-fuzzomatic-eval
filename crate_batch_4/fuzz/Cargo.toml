@@ -1,0 +1,352 @@
+[[bin]]
+name = "pcapng"
+path = "fuzz_targets/pcapng.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pdf_open"
+path = "fuzz_targets/pdf_open.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pdf_from_data"
+path = "fuzz_targets/pdf_from_data.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pdf_parse_xref_stream_and_trailer"
+path = "fuzz_targets/pdf_parse_xref_stream_and_trailer.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pgp"
+path = "fuzz_targets/pgp.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phonenumber"
+path = "fuzz_targets/phonenumber.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "plist"
+path = "fuzz_targets/plist.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "png_next_frame"
+path = "fuzz_targets/png_next_frame.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "prettytable_new"
+path = "fuzz_targets/prettytable_new.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pulldown_cmark_insert"
+path = "fuzz_targets/pulldown_cmark_insert.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pulldown_cmark_new"
+path = "fuzz_targets/pulldown_cmark_new.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pulldown_cmark_push_html"
+path = "fuzz_targets/pulldown_cmark_push_html.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "quick_xml_from_reader"
+path = "fuzz_targets/quick_xml_from_reader.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "quick_xml_read_event"
+path = "fuzz_targets/quick_xml_read_event.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pulldown_cmark_parse_Parser_new_fuzz"
+path = "fuzz_targets/pulldown_cmark_parse_Parser_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pulldown_cmark_Options_empty_insert_fuzz"
+path = "fuzz_targets/pulldown_cmark_Options_empty_insert_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pulldown_cmark_parse_new_ext_fuzz"
+path = "fuzz_targets/pulldown_cmark_parse_new_ext_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pulldown_cmark_html_push_html_fuzz"
+path = "fuzz_targets/pulldown_cmark_html_push_html_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pulldown_cmark_parse_new_fuzz"
+path = "fuzz_targets/pulldown_cmark_parse_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pdf_file_File_get_page_fuzz"
+path = "fuzz_targets/pdf_file_File_get_page_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pdf_parser_parse_xref_fuzz"
+path = "fuzz_targets/pdf_parser_parse_xref_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pdf_file_File_num_pages_fuzz"
+path = "fuzz_targets/pdf_file_File_num_pages_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pdf_parser_lexer_new_fuzz"
+path = "fuzz_targets/pdf_parser_lexer_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pdf_file_open_fuzz"
+path = "fuzz_targets/pdf_file_open_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pdf_file_from_data_fuzz"
+path = "fuzz_targets/pdf_file_from_data_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "prettytable_row_new_fuzz"
+path = "fuzz_targets/prettytable_row_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "prettytable_table_print_fuzz"
+path = "fuzz_targets/prettytable_table_print_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "prettytable_table_new_fuzz"
+path = "fuzz_targets/prettytable_table_new_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "prettytable_add_row_fuzz"
+path = "fuzz_targets/prettytable_add_row_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pgp_packet_signature_de_Signature_from_slice_fuzz"
+path = "fuzz_targets/pgp_packet_signature_de_Signature_from_slice_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "png_decoder_read_info_fuzz"
+path = "fuzz_targets/png_decoder_read_info_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "png_decoder_new_with_limits_fuzz"
+path = "fuzz_targets/png_decoder_new_with_limits_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "png_output_info_buffer_size_fuzz"
+path = "fuzz_targets/png_output_info_buffer_size_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "png_decoder_Reader_next_frame_fuzz"
+path = "fuzz_targets/png_decoder_Reader_next_frame_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "quick_xml_reader_from_str_fuzz"
+path = "fuzz_targets/quick_xml_reader_from_str_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "quick_xml_reader_read_event_fuzz"
+path = "fuzz_targets/quick_xml_reader_read_event_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "plist_value_from_reader_fuzz"
+path = "fuzz_targets/plist_value_from_reader_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "glob_glob_fuzz"
+path = "fuzz_targets/glob_glob_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phonenumber_parser_parse_fuzz"
+path = "fuzz_targets/phonenumber_parser_parse_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "pcapng_block_parse_block_fuzz"
+path = "fuzz_targets/pcapng_block_parse_block_fuzz.rs"
+test = false
+doc = false
+bench = false
+
+[package]
+name = "crate_batch_4-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[dependencies]
+libfuzzer-sys = "0.4"
+pancurses = "0.17"
+pcapng = "1.0.0"
+glob = "0.3.2"
+pgp = "0.15.0"
+
+[dev-dependencies]
+
+[target]
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies.arbitrary]
+version = "1.3.0"
+features = [ "derive",]
+
+[dependencies.phonenumber]
+git = "https://github.com/whisperfish/rust-phonenumber"
+rev = "da5c76c"
+
+[dependencies.pdf-112]
+package = "pdf"
+git = "https://github.com/pdf-rs/pdf"
+rev = "316168c"
+
+[dependencies.pdf-115]
+package = "pdf"
+git = "https://github.com/pdf-rs/pdf"
+rev = "99e70cd"
+
+[dependencies.plist]
+git = "https://github.com/ebarnard/rust-plist"
+rev = "9ed64da"
+
+[dependencies.png]
+git = "https://github.com/image-rs/image-png"
+rev = "007c06a"
+
+[dependencies.prettytable]
+package = "prettytable-rs"
+git = "https://github.com/phsym/prettytable-rs"
+rev = "25cfe72"
+
+[dependencies.pulldown-cmark-128]
+package = "pulldown-cmark"
+git = "https://github.com/pulldown-cmark/pulldown-cmark"
+rev = "a4e41df"
+
+[dependencies.pulldown-cmark-131]
+package = "pulldown-cmark"
+git = "https://github.com/pulldown-cmark/pulldown-cmark"
+rev = "fb1fb37"
+
+[dependencies.pulldown-cmark-133]
+package = "pulldown-cmark"
+git = "https://github.com/pulldown-cmark/pulldown-cmark"
+rev = "fba26ff"
+
+[dependencies.quick-xml]
+git = "https://github.com/tafia/quick-xml"
+rev = "0fd7fbb"
+
+[dependencies.crate_batch_4]
+path = ".."

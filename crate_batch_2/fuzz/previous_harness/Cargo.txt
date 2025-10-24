@@ -1,0 +1,130 @@
+[package]
+name = "crate_batch_2-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+arbitrary = { version = "1.3", features = ["derive"] }
+flif={git="https://github.com/ZoeyR/flif.rs", rev="a3e7784"}
+fontdue={git="https://github.com/mooman219/fontdue", rev="4772807"}
+geo = "0.29.3"
+goblin = {git="https://github.com/m4b/goblin", rev="c7cd994"}
+h2 = {git="https://github.com/hyperium/h2", rev="308663e"}
+
+# for both 45, 46, they are the same version 
+handlebars={package = "handlebars", git = "https://github.com/sunng87/handlebars-rust", rev="880486b"}
+serde = "*"
+serde-hjson = {git="https://github.com/hjson/hjson-rust", rev="6b76180"}
+human_name = {git="https://github.com/djudd/human-name", rev="2bcfc22"}
+hyper={git="https://github.com/hyperium/hyper", rev="6eb0753"}
+image = {git="https://github.com/image-rs/image", rev = "63bbe70"}
+gif = {git="https://github.com/image-rs/image-gif", rev = "167bc0f"}
+jpeg-decoder-63={package="jpeg-decoder", git = "https://github.com/image-rs/jpeg-decoder", rev = "8a8d331"}
+jpeg-decoder-64={package="jpeg-decoder", git = "https://github.com/image-rs/jpeg-decoder", rev = "ee4fc87"}
+fancy-regex= {git="https://github.com/fancy-regex/fancy-regex", rev="f99e5f6"}
+
+jsonschema = {git = "https://github.com/Stranger6667/jsonschema", rev = "d7b6919"}
+juniper={git="https://github.com/graphql-rust/juniper"   , rev="52aea4d"}
+just = {package="just", git ="https://github.com/casey/just", rev="8371ada"}
+kalker = "2.1.1"
+
+[dependencies.crate_batch_2]
+path = ".."
+
+[[bin]]
+name = "fancy_regex"
+path = "fuzz_targets/fancy_regex.rs"
+test = false
+doc = false
+bench = false
+
+
+[[bin]]
+name = "filf"
+path = "fuzz_targets/filf.rs"
+test = false
+doc = false
+bench = false
+
+
+[[bin]]
+name = "fontdue"
+path = "fuzz_targets/fontdue.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "geo"
+path = "fuzz_targets/geo.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "gif"
+path = "fuzz_targets/gif.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "goblin"
+path = "fuzz_targets/goblin.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "handlebars"
+path = "fuzz_targets/handlebars.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "hjson"
+path = "fuzz_targets/hjson.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "human_name"
+path = "fuzz_targets/human_name.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "hyper"
+path = "fuzz_targets/hyper.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "image_read_image"
+path = "fuzz_targets/image_read_image.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "image"
+path = "fuzz_targets/image.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "juniper"
+path = "fuzz_targets/juniper.rs"
+test = false
+doc = false
+bench = false
