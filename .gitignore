@@ -5,14 +5,14 @@ Cargo.lock
 
 # Fuzzing artifacts
 **/fuzz/corpus/
-**/fuzz/artifacts/
+# **/fuzz/artifacts/
 **/fuzz/target/
 corpus/
-artifacts/
+# artifacts/
 
 # Fuzzomatic results
-.fuzzomatic_results.json
-**/.fuzzomatic_results.json
+# .fuzzomatic_results.json
+# **/.fuzzomatic_results.json
 
 # Python
 __pycache__/
