@@ -1,0 +1,83 @@
+# Rust build artifacts
+target/
+**/target/
+Cargo.lock
+
+# Fuzzing artifacts
+**/fuzz/corpus/
+**/fuzz/artifacts/
+**/fuzz/target/
+corpus/
+artifacts/
+
+# Fuzzomatic results
+.fuzzomatic_results.json
+**/.fuzzomatic_results.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Poetry
+poetry.lock
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment files
+.env
+.env.local
+settings.env
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# Log files
+*.log
+
+# Compiled documentation
+doc/
+**/doc/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
