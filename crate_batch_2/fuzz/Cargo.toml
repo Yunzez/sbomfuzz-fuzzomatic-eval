@@ -1,146 +1,6 @@
 [[bin]]
-name = "geo_algorithm_convex_hull_convex_hull_fuzz"
-path = "fuzz_targets/geo_algorithm_convex_hull_convex_hull_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "fontdue_font_from_bytes_fuzz"
-path = "fuzz_targets/fontdue_font_from_bytes_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "fontdue_font_rasterize_fuzz"
-path = "fuzz_targets/fontdue_font_rasterize_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "image_image_total_bytes_fuzz"
-path = "fuzz_targets/image_image_total_bytes_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "image_codecs_jpeg_decoder_JpegDecoder_new_fuzz"
-path = "fuzz_targets/image_codecs_jpeg_decoder_JpegDecoder_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "image_image_read_image_fuzz"
-path = "fuzz_targets/image_image_read_image_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "image_codecs_webp_decoder_WebPDecoder_new_fuzz"
-path = "fuzz_targets/image_codecs_webp_decoder_WebPDecoder_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "human_name_Name_parse_fuzz"
-path = "fuzz_targets/human_name_Name_parse_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "handlebars_registry_new_fuzz"
-path = "fuzz_targets/handlebars_registry_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "handlebars_registry_render_template_fuzz"
-path = "fuzz_targets/handlebars_registry_render_template_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "juniper_parser_lexer_Lexer_new_fuzz"
-path = "fuzz_targets/juniper_parser_lexer_Lexer_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "goblin_archive_Index_parse_sysv_index_fuzz"
-path = "fuzz_targets/goblin_archive_Index_parse_sysv_index_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "url_Url_parse_fuzz"
-path = "fuzz_targets/url_Url_parse_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "gif_reader_read_info_fuzz"
-path = "fuzz_targets/gif_reader_read_info_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "gif_reader_set_color_output_fuzz"
-path = "fuzz_targets/gif_reader_set_color_output_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "gif_reader_new_fuzz"
-path = "fuzz_targets/gif_reader_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "Flif_decode_fuzz"
-path = "fuzz_targets/:Flif_decode_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "Flif_get_raw_pixels_fuzz"
-path = "fuzz_targets/Flif_get_raw_pixels_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "serde_hjson_de_from_slice_fuzz"
-path = "fuzz_targets/serde_hjson_de_from_slice_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "jpeg_decoder_decoder_new_fuzz"
-path = "fuzz_targets/jpeg_decoder_decoder_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "fancy_regex_Regex_new_fuzz"
-path = "fuzz_targets/fancy_regex_Regex_new_fuzz.rs"
+name = "fuzz_target_1"
+path = "fuzz_targets/fuzz_target_1.rs"
 test = false
 doc = false
 bench = false
@@ -156,17 +16,16 @@ libfuzzer-sys = "0.4"
 geo = "0.29.3"
 serde = "*"
 kalker = "2.1.1"
+arbitrary = { version = "1", features = ["derive"] }
 
-[dev-dependencies]
-
-[target]
+[workspace]
+members = []
 
 [package.metadata]
 cargo-fuzz = true
 
-[dependencies.arbitrary]
-version = "1.3"
-features = [ "derive",]
+[dependencies.crate_batch_2]
+path = ".."
 
 [dependencies.flif]
 git = "https://github.com/ZoeyR/flif.rs"
@@ -236,5 +95,58 @@ package = "just"
 git = "https://github.com/casey/just"
 rev = "8371ada"
 
-[dependencies.crate_batch_2]
-path = ".."
+[[bin]]
+name = "fuzz_2"
+path = "fuzz_targets/fuzz_2.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_6"
+path = "fuzz_targets/fuzz_6.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8"
+path = "fuzz_targets/from_utf8.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_9"
+path = "fuzz_targets/fuzz_9.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_10"
+path = "fuzz_targets/fuzz_10.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_11"
+path = "fuzz_targets/fuzz_11.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_1"
+path = "fuzz_targets/from_utf8_1.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_2"
+path = "fuzz_targets/from_utf8_2.rs"
+test = false
+doc = false
+

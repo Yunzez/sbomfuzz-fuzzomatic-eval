@@ -1,0 +1,299 @@
+use std::panic;
+
+// *** main start
+pub fn main() {
+    println!("running crate batch 6");
+    
+    let tinytemplate_data = "{}";
+    run_1(tinytemplate_data);
+    
+    let todotxt_data = b"2021-01-01 This is a task +project @context";
+    run_2(todotxt_data);
+    
+    let tokei_data = b"<script>\ra </script>";
+    run_3(tokei_data);
+    
+    run_4();
+    
+    let ttf_data = b"\x00\x01\x00\x00\x00\x0f\x00\x10\x00PTT-W\x002h\xd7\x81x\x00\"";
+    run_5(ttf_data);
+    
+    let ubyte_data = "1 KB";
+    run_6(ubyte_data);
+    
+    run_7();
+    
+    run_9();
+    run_10();
+    run_11();
+    
+    let vobsub_data = b"";
+    run_12(vobsub_data);
+    
+    run_13();
+    
+    let ws_data = b"\xff\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe\xfe".to_vec();
+    run_14(ws_data);
+    
+    run_15();
+    
+    let zip_data = b"PK\x03\x04\n\x00\x00\x00\x00\x00\xe9p\xdaJ\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x1c\x00zip/UT\t\x00\x03\xf5\xf8PY\"\xf9PYux\x0b\x00\x01\x04\xf5\x01\x00\x00\x04\x14\x00\x00\x00PK\x03\x04\x14\x00\x00\x00\x08\x00\xe9p\xdaJ\xf6\xe3\xf0\xa6\xd6\x00\x00\x00\x04\x18\x00\x00\r\x00\x1c\x00zip/.";
+    run_16(zip_data);
+    
+    println!("ending crate batch 6");
+}
+// *** main end
+
+pub fn run_1(data: &str) {
+    println!("run 1");
+    let mut tpl = tinytemplate::TinyTemplate::new();
+    let _ = tpl.add_template("template", data);
+}
+
+use todotxt::Task;
+pub fn run_2(data: &[u8]) {
+    println!("run 2");
+    if let Ok(line) = std::str::from_utf8(data) {
+        let _: Result<Task, _> = line.parse();
+    }
+}
+
+use tokei::{ Config, LanguageType, Languages };
+pub fn run_3(buggy_input: &[u8]) {
+    println!("run 3");
+    let language = LanguageType::Vue;
+    let config = &(Config {
+        treat_doc_strings_as_comments: Some(true),
+        ..Config::default()
+    });
+
+    let result = panic::catch_unwind(|| { language.parse_from_slice(buggy_input, config) });
+
+    match result {
+        Ok(_) => println!("Parsed successfully"),
+        Err(_) => eprintln!("❌ Caught panic in `parse_from_slice`!"),
+    }
+}
+
+pub fn run_4() {
+    println!("run 4");
+
+    let s = r#"
+         q = "\u000B"
+    "#;
+    let data: toml::Value = toml::from_str(s).unwrap();
+    println!("{:?}", data);
+    println!("{}", toml::to_string(&data).unwrap());
+
+    let s = r#"
+        "\n" = 5
+    "#;
+    let data: toml::Value = toml::from_str(s).unwrap();
+    println!("{:?}", data);
+    match toml::to_string(&data) {
+        Ok(serialized) => println!("{}", serialized),
+        Err(e) => eprintln!("Error serializing TOML: {}", e),
+    }
+
+    let brackets = "[".repeat(2);
+    let input_string = format!("x={}", &brackets);
+    let _: Result<toml::Value, _> = toml::from_str(&input_string);
+}
+
+pub fn run_5(data: &[u8]) {
+    println!("run 5");
+    match ttf_parser::Face::from_slice(data, 0) {
+        Ok(face) => {
+            let _ = face.outline_glyph(ttf_parser::GlyphId(0), &mut Builder);
+        }
+        Err(e) => eprintln!("Error parsing font: {:?}", e),
+    }
+}
+
+struct Builder;
+
+impl ttf_parser::OutlineBuilder for Builder {
+    #[inline]
+    fn move_to(&mut self, _: f32, _: f32) {
+        panic!();
+    }
+
+    #[inline]
+    fn line_to(&mut self, _: f32, _: f32) {
+        panic!();
+    }
+
+    #[inline]
+    fn quad_to(&mut self, _: f32, _: f32, _: f32, _: f32) {
+        panic!();
+    }
+
+    #[inline]
+    fn curve_to(&mut self, _: f32, _: f32, _: f32, _: f32, _: f32, _: f32) {
+        panic!();
+    }
+
+    #[inline]
+    fn close(&mut self) {
+        panic!();
+    }
+}
+
+pub fn run_6(data: &str) {
+    println!("run 6");
+    match data.parse::<ubyte::ByteUnit>() {
+        Ok(byte_unit) => println!("Parsed byte unit: {:?}", byte_unit),
+        Err(e) => eprintln!("Error parsing byte unit: {:?}", e),
+    }
+}
+
+use unicode_segmentation::UnicodeSegmentation;
+pub fn run_7() {
+    println!("run 7");
+
+    let s = "\u{1F938}\u{1F3FE}\u{1F3FE}";
+    let forward = UnicodeSegmentation::graphemes(s, true).collect::<Vec<_>>();
+    let forward_reversed = forward.into_iter().rev().collect::<Vec<_>>();
+    let reverse = UnicodeSegmentation::graphemes(s, true).rev().collect::<Vec<_>>();
+    assert_eq!(forward_reversed, reverse);
+
+    let s =
+        "j\u{FFFD}jjjjjjjjjjj\u{0489}\u{200D}\u{2764}jjjjjjjjj\u{0489}j\u{FFFD}\u{FFFD}\u{FFFD}\"jjjjjj\"jjD\u{0409}\u{0489}0\\f\u{FFFD}";
+    let forward = s.split_word_bounds().collect::<Vec<_>>();
+    let forward_reversed = forward.into_iter().rev().collect::<Vec<_>>();
+    let reverse = s.split_word_bounds().rev().collect::<Vec<_>>();
+    assert_eq!(forward_reversed, reverse);
+}
+
+pub fn run_9() {
+    let url = "www.example.com";
+    let _ = url::Url::parse(url);
+
+    let result = url::Url::parse("p:/.//:/");
+    match result {
+        Ok(u) => {
+            let s = u.as_str();
+            assert_eq!(s, "p://:/");
+            match url::Url::parse("p://:/") {
+                Ok(parsed_url) => println!("Parsed URL: {}", parsed_url),
+                Err(e) => eprintln!("Error parsing URL: {:?}", e),
+            }
+        }
+        Err(e) => eprintln!("Error parsing URL: {:?}", e),
+    }
+}
+
+pub fn run_10() {
+    println!("run 10");
+    let _ = panic::catch_unwind(||uuid::Uuid::parse_str("F9168C5E-CEB2F4faaFB6BFF329BF39FA1E4").unwrap());
+}
+
+pub fn run_11() {
+    println!("run 11");
+    let x = vial::Request::from_reader(std::io::empty());
+    match x {
+        Ok(request) => {
+            vial::util::percent_decode(request.path());
+        }
+        Err(e) => eprintln!("Error creating request: {:?}", e),
+    }
+}
+
+pub fn run_12(data: &[u8]) {
+    println!("run 12");
+    for _ in vobsub::subtitles(data) {
+        // Just parse and ignore.
+    }
+}
+
+use std::{mem, slice};
+use std::os::unix::io::RawFd;
+use wayland_commons::wire::{Message, ArgumentType};
+
+unsafe fn convert_slice<T: Sized>(data: &[u8]) -> Option<&[T]> {
+    let n = mem::size_of::<T>();
+
+    if n == 0 || data.as_ptr().align_offset(n) != 0 || data.len() % n != 0 {
+        return None;
+    }
+
+    Some(slice::from_raw_parts(
+        data.as_ptr() as *const T,
+        data.len() / n,
+    ))
+}
+
+fn get_arg_types(data: &[u8]) -> Option<[ArgumentType; 16]> {
+    use ArgumentType::*;
+
+    if data.len() != 16 {
+        return None;
+    }
+
+    let mut res = [Int; 16];
+    for i in 0..16 {
+        res[i] = match data[i] & 0b111 {
+            0 => Int,
+            1 => Uint,
+            2 => Fixed,
+            3 => Str,
+            4 => Object,
+            5 => NewId,
+            6 => Array,
+            7 => Fd,
+            _ => return None,
+        };
+    }
+    Some(res)
+}
+
+pub fn run_13() {
+    println!("run 13");
+
+    let data: &[u8] = &[
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+        0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 4,
+    ];
+
+    let fds = unsafe { convert_slice::<RawFd>(&data[..16]) };
+    let args = get_arg_types(&data[16..32]);
+    let data = unsafe { convert_slice::<u32>(&data[32..]) };
+
+    if let (Some(fds), Some(args), Some(data)) = (fds, args, data) {
+        let result = std::panic::catch_unwind(|| Message::from_raw(data, &args, fds));
+
+        match result {
+            Ok(_) => println!("✅ Message parsing succeeded."),
+            Err(_) => eprintln!("❌ Caught panic in `Message::from_raw`, continuing execution."),
+        }
+    } else {
+        eprintln!("❌ Invalid input detected, skipping Message::from_raw");
+    }
+
+    println!("🚀 Continuing execution after handling the error...");
+}
+
+pub fn run_14(bytes: Vec<u8>) {
+    println!("run 14");
+    let mut data = std::io::Cursor::new(bytes);
+    let _ =  ws::Frame::parse(&mut data);
+}
+
+pub fn run_15() {
+    let decoder = yaxpeax_x86::amd64::InstDecoder::default();
+    drop(decoder.decode_slice(&[98, 98, 101, 10]));
+}
+
+pub fn run_16(data: &[u8]) {
+    println!("running run 16");
+    let reader = std::io::Cursor::new(data);
+    let mut archive = if let Ok(x) = zip::ZipArchive::new(reader) { x } else { return; };
+
+    for i in 0..archive.len() {
+        use std::io::prelude::*;
+
+        let file = archive.by_index(i).unwrap();
+        let _size = file.bytes().count();
+    }
+}

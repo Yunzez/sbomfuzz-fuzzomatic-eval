@@ -1,209 +1,6 @@
 [[bin]]
-name = "flac_stream_Stream_metadata_fuzz"
-path = "fuzz_targets/flac_stream_Stream_metadata_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "flac_stream_Stream_from_buffer_fuzz"
-path = "fuzz_targets/flac_stream_Stream_from_buffer_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "flac_stream_Stream_iter_fuzz"
-path = "fuzz_targets/flac_stream_Stream_iter_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "flac_stream_Stream_info_fuzz"
-path = "fuzz_targets/flac_stream_Stream_info_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "cursive_core_views_dialog_Dialog_title_fuzz"
-path = "fuzz_targets/cursive_core_views_dialog_Dialog_title_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "cursive_core_views_dialog_Dialog_around_fuzz"
-path = "fuzz_targets/cursive_core_views_dialog_Dialog_around_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "cursive_core_views_dialog_Dialog_button_fuzz"
-path = "fuzz_targets/cursive_core_views_dialog_Dialog_button_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "flatgeobuf_file_reader_FgbReader_open_fuzz"
-path = "fuzz_targets/flatgeobuf_file_reader_FgbReader_open_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "flatgeobuf_file_reader_FgbReader_header_fuzz"
-path = "fuzz_targets/flatgeobuf_file_reader_FgbReader_header_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "bincode_config_Configuration_standard_fuzz"
-path = "fuzz_targets/bincode_config_Configuration_standard_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "bincode_decode_from_slice_fuzz"
-path = "fuzz_targets/bincode_decode_from_slice_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "cursive_cursive_default_fuzz"
-path = "fuzz_targets/cursive_cursive_default_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "cursive_cursive_runnable_run_fuzz"
-path = "fuzz_targets/cursive_cursive_runnable_run_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "bson_document_from_reader_fuzz"
-path = "fuzz_targets/bson_document_from_reader_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "bson_decoder_decode_document_fuzz"
-path = "fuzz_targets/bson_decoder_decode_document_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "fatfs_fs_FsOptions_new_fuzz"
-path = "fuzz_targets/fatfs_fs_FsOptions_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "fatfs_fs_FileSystem_new_fuzz"
-path = "fuzz_targets/fatfs_fs_FileSystem_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "bcrypt_verify_fuzz"
-path = "fuzz_targets/bcrypt_verify_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "chrono_datetime_parse_from_rfc2822_fuzz"
-path = "fuzz_targets/chrono_datetime_parse_from_rfc2822_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "chrono_offset_utc_now_fuzz"
-path = "fuzz_targets/chrono_offset_utc_now_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "chrono_naive_date_days_new_fuzz"
-path = "fuzz_targets/chrono_naive_date_days_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "chrono_datetime_DateTime_checked_add_days_fuzz"
-path = "fuzz_targets/chrono_datetime_DateTime_checked_add_days_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "der_decoder_Decoder_new_fuzz"
-path = "fuzz_targets/der_decoder_Decoder_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "cssparser_parser_next_including_whitespace_and_comments_fuzz"
-path = "fuzz_targets/cssparser_parser_next_including_whitespace_and_comments_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "csscolorparser_parser_parse_fuzz"
-path = "fuzz_targets/csscolorparser_parser_parse_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "alloy_json_abi_abi_JsonAbi_parse_fuzz"
-path = "fuzz_targets/alloy_json_abi_abi_JsonAbi_parse_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "der_parser_der_parse_der_fuzz"
-path = "fuzz_targets/der_parser_der_parse_der_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "cookie_jar_signed_mut_fuzz"
-path = "fuzz_targets/cookie_jar_signed_mut_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "cranelift_reader_parser_parse_test_fuzz"
-path = "fuzz_targets/cranelift_reader_parser_parse_test_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "exmex_parse_with_default_ops_fuzz"
-path = "fuzz_targets/exmex_parse_with_default_ops_fuzz.rs"
+name = "fuzz_target_1"
+path = "fuzz_targets/fuzz_target_1.rs"
 test = false
 doc = false
 bench = false
@@ -221,17 +18,16 @@ cssparser = "0.34.0"
 cursive = "0.21"
 fatfs = "0.3.6"
 flac = "0.5.0"
+arbitrary = { version = "1", features = ["derive"] }
 
-[dev-dependencies]
-
-[target]
+[workspace]
+members = []
 
 [package.metadata]
 cargo-fuzz = true
 
-[dependencies.arbitrary]
-version = "1.0.0"
-features = [ "derive",]
+[dependencies.crate_batch_1]
+path = ".."
 
 [dependencies.alloy-json-abi]
 git = "https://github.com/alloy-rs/core"
@@ -313,5 +109,58 @@ rev = "3c29e56"
 git = "https://github.com/flatgeobuf/flatgeobuf"
 rev = "25a0456"
 
-[dependencies.crate_batch_1]
-path = ".."
+[[bin]]
+name = "from_utf8"
+path = "fuzz_targets/from_utf8.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_4"
+path = "fuzz_targets/fuzz_4.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_1"
+path = "fuzz_targets/from_utf8_1.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_2"
+path = "fuzz_targets/from_utf8_2.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_8"
+path = "fuzz_targets/fuzz_8.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_3"
+path = "fuzz_targets/from_utf8_3.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_4"
+path = "fuzz_targets/from_utf8_4.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_11"
+path = "fuzz_targets/fuzz_11.rs"
+test = false
+doc = false
+

@@ -1,195 +1,6 @@
 [[bin]]
-name = "libflate"
-path = "fuzz_targets/libflate.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "lopdf"
-path = "fuzz_targets/lopdf.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "lz_fear"
-path = "fuzz_targets/lz_fear.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "lz4_flex"
-path = "fuzz_targets/lz4_flex.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "minidump_85"
-path = "fuzz_targets/minidump_85.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "minidump_86"
-path = "fuzz_targets/minidump_86.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "miniz_oxide"
-path = "fuzz_targets/miniz_oxide.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "mp4ameta"
-path = "fuzz_targets/mp4ameta.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "naga"
-path = "fuzz_targets/naga.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "nom"
-path = "fuzz_targets/nom.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "npy"
-path = "fuzz_targets/npy.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "ntfs"
-path = "fuzz_targets/ntfs.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "lz_fear_framed_decompress_LZ4FrameReader_new_fuzz"
-path = "fuzz_targets/lz_fear_framed_decompress_LZ4FrameReader_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "base64_decode_fuzz"
-path = "fuzz_targets/base64_decode_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "minidump_minidump_Minidump_read_fuzz"
-path = "fuzz_targets/minidump_minidump_Minidump_read_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "minidump_minidump_Minidump_get_stream_fuzz"
-path = "fuzz_targets/minidump_minidump_Minidump_get_stream_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "mp4ameta_tag_Tag_read_from_fuzz"
-path = "fuzz_targets/mp4ameta_tag_Tag_read_from_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "lz4_flex_block_decompress_decompress_size_prepended_fuzz"
-path = "fuzz_targets/lz4_flex_block_decompress_decompress_size_prepended_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "lz4_flex_block_compress_compress_prepend_size_fuzz"
-path = "fuzz_targets/lz4_flex_block_compress_compress_prepend_size_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "ntfs_ntfs_new_fuzz"
-path = "fuzz_targets/ntfs_ntfs_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "ntfs_ntfs_read_upcase_table_fuzz"
-path = "fuzz_targets/ntfs_ntfs_read_upcase_table_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "libflate_deflate_decode_Decoder_new_fuzz"
-path = "fuzz_targets/libflate_deflate_decode_Decoder_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "miniz_oxide_inflate_decompress_to_vec_fuzz"
-path = "fuzz_targets/miniz_oxide_inflate_decompress_to_vec_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "miniz_oxide_inflate_core_HuffmanTable_new_fuzz"
-path = "fuzz_targets/miniz_oxide_inflate_core_HuffmanTable_new_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "miniz_oxide_deflate_compress_to_vec_fuzz"
-path = "fuzz_targets/miniz_oxide_deflate_compress_to_vec_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "lopdf_reader_Document_load_mem_fuzz"
-path = "fuzz_targets/lopdf_reader_Document_load_mem_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "naga_front_wgsl_parse_fuzz"
-path = "fuzz_targets/naga_front_wgsl_parse_fuzz.rs"
-test = false
-doc = false
-bench = false
-
-[[bin]]
-name = "npy_npy_data_from_bytes_fuzz"
-path = "fuzz_targets/npy_npy_data_from_bytes_fuzz.rs"
+name = "fuzz_target_1"
+path = "fuzz_targets/fuzz_target_1.rs"
 test = false
 doc = false
 bench = false
@@ -205,17 +16,16 @@ libfuzzer-sys = "0.4"
 mp4ameta = "0.11.0"
 ncurses-rs = "0.0.3"
 base64 = "0.22.1"
+arbitrary = { version = "1", features = ["derive"] }
 
-[dev-dependencies]
-
-[target]
+[workspace]
+members = []
 
 [package.metadata]
 cargo-fuzz = true
 
-[dependencies.arbitrary]
-version = "1.3.0"
-features = [ "derive",]
+[dependencies.crate_batch_3]
+path = ".."
 
 [dependencies.libflate]
 git = "https://github.com/sile/libflate"
@@ -278,5 +88,58 @@ rev = "42ea9dd"
 git = "https://github.com/ColinFinck/ntfs"
 rev = "0783cbd"
 
-[dependencies.crate_batch_3]
-path = ".."
+[[bin]]
+name = "fuzz_1"
+path = "fuzz_targets/fuzz_1.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_2"
+path = "fuzz_targets/fuzz_2.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_3"
+path = "fuzz_targets/fuzz_3.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_4"
+path = "fuzz_targets/fuzz_4.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_5"
+path = "fuzz_targets/fuzz_5.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_9"
+path = "fuzz_targets/fuzz_9.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_10"
+path = "fuzz_targets/fuzz_10.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_12"
+path = "fuzz_targets/fuzz_12.rs"
+test = false
+doc = false
+
