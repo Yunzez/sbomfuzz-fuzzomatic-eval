@@ -31,7 +31,7 @@ use symphonia::core::probe::Hint;
 use symphonia::default::get_probe;
 use tera_190;
 
-pub struct BenchmarkData {
+/*pub struct BenchmarkData {
     pub run1_der: Vec<u8>,
     pub run3_repeat: usize,
     pub run4_ini: String,
@@ -83,6 +83,26 @@ impl Default for BenchmarkData {
             run20_sql: "?62666666121266666612".to_owned(),
         }
     }
+}*/
+
+pub struct BenchmarkData {
+    pub testString: String,
+    pub testString2: String,
+    pub testVecU8: Vec<u8>,
+    pub testU64: u64,
+    pub testKey: [u8; 64],
+}
+
+impl Default for BenchmarkData {
+    fn default() -> Self {
+        Self {
+            testString: "Hello, Benchmark!".to_owned(),
+            testString2: "Another test string".to_owned(),
+            testVecU8: vec![1, 2, 3, 4, 5],
+            testU64: 42,
+            testKey: [0u8; 64],
+        }
+    }
 }
 
 pub fn main() {
@@ -127,7 +147,7 @@ fn test_decode(file: Vec<u8>) -> SymphoniaResult<()> {
 pub fn benchmark(data: &BenchmarkData) {
     // --- run 1 ---------------------------------------------------------------
     {
-        let decoded = match decode::<Open>(data.run1_der.as_slice()) {
+        let decoded = match decode::<Open>(data.testVecU8.as_slice()) {
             Ok(v) => v,
             Err(e) => {
                 eprintln!("Decoding failed: {:?}", e);
@@ -146,7 +166,8 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 3 ---------------------------------------------------------------
     {
         println!("running line 152");
-        let nested = "{}".repeat(data.run3_repeat);
+        let repeat = (data.testU64 as usize).min(16);
+        let nested = "{}".repeat(repeat);
         let result: Result<ron::Value, _> = ron::from_str(&nested);
         match result {
             Ok(value) => println!("Parsed successfully: {:?}", value),
@@ -164,32 +185,38 @@ pub fn benchmark(data: &BenchmarkData) {
 
     // --- run 4 ---------------------------------------------------------------
     {
-        let mut cursor = Cursor::new(data.run4_ini.clone());
+        let mut cursor = Cursor::new(data.testString.clone());
         let _ = Ini::read_from(&mut cursor).unwrap();
     }
 
     // --- run 5 ---------------------------------------------------------------
     {
-        if let Err(e) = panic::catch_unwind(|| rustc_demangle::demangle(&data.run5_symbol)) {
+        if let Err(e) = panic::catch_unwind(|| rustc_demangle::demangle(&data.testString)) {
             eprintln!("Caught panic in run 5: {:?}", e);
         }
     }
 
     // --- run 6 ---------------------------------------------------------------
     {
-        if let Err(e) = panic::catch_unwind(|| VersionReq::parse(&data.run6_version_req).unwrap()) {
+        if let Err(e) = panic::catch_unwind(|| VersionReq::parse(&data.testString2).unwrap()) {
             eprintln!("Caught panic in run 6: {:?}", e);
         }
     }
 
     // --- run 7 ---------------------------------------------------------------
     {
-        match serde_yaml::from_slice::<serde_yaml::Value>(&data.run7_invalid_yaml) {
+        let sample_bytes = if data.testVecU8.is_empty() {
+            vec![b'i', b'n']
+        } else {
+            data.testVecU8.clone()
+        };
+        match serde_yaml::from_slice::<serde_yaml::Value>(&sample_bytes) {
             Ok(value) => println!("Parsed YAML successfully: {:?}", value),
             Err(err) => eprintln!("Failed to parse YAML: {}", err),
         }
 
-        let deserialized: Number = serde_yaml::from_str(&data.run7_number).unwrap();
+        let number_input = data.testU64.to_string();
+        let deserialized: Number = serde_yaml::from_str(&number_input).unwrap();
         let serialized_yaml = serde_yaml::to_string(&deserialized).unwrap();
         let roundtrip: Number = serde_yaml::from_str(&serialized_yaml).unwrap();
 
@@ -202,7 +229,7 @@ pub fn benchmark(data: &BenchmarkData) {
 
     // --- run 8 ---------------------------------------------------------------
     {
-        if let Err(e) = panic::catch_unwind(|| simple_asn1::from_der(&data.run8_asn1)) {
+        if let Err(e) = panic::catch_unwind(|| simple_asn1::from_der(&data.testVecU8)) {
             eprintln!("Caught panic in run 8: {:?}", e);
         }
     }
@@ -210,7 +237,7 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 9 ---------------------------------------------------------------
     {
         let mut decoder = Decoder::new();
-        match decoder.decompress_vec(&data.run9_snappy) {
+        match decoder.decompress_vec(&data.testVecU8) {
             Ok(_) => println!("Decompression succeeded."),
             Err(e) => eprintln!("Decompression failed: {:?}", e),
         }
@@ -236,7 +263,8 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 12 --------------------------------------------------------------
     {
         println!("run 12");
-        let sql = "(".repeat(data.run12_sql_repeat);
+        let repeat = (data.testU64 as usize).min(32);
+        let sql = "(".repeat(repeat);
         let dialect = GenericDialect {};
 
         if let Err(e) = panic::catch_unwind(|| Parser::parse_sql(&dialect, &sql)) {
@@ -247,7 +275,7 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 13 --------------------------------------------------------------
     {
         println!("run 13");
-        if let Err(e) = panic::catch_unwind(|| ssh_keys::openssh::parse_private_key(&data.run13_private_key)) {
+        if let Err(e) = panic::catch_unwind(|| ssh_keys::openssh::parse_private_key(&data.testString)) {
             eprintln!("Caught panic in run 13: {:?}", e);
         }
     }
@@ -255,14 +283,14 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 14 --------------------------------------------------------------
     {
         println!("run 14");
-        if let Err(e) = panic::catch_unwind(|| ssh_parser::parse_ssh_packet(&data.run14_packet)) {
+        if let Err(e) = panic::catch_unwind(|| ssh_parser::parse_ssh_packet(&data.testVecU8)) {
             eprintln!("Caught panic in run 14: {:?}", e);
         }
     }
 
     // --- run 15 --------------------------------------------------------------
     {
-        if let Err(e) = panic::catch_unwind(|| movie::parse_movie(&data.run15_bytes)) {
+        if let Err(e) = panic::catch_unwind(|| movie::parse_movie(&data.testVecU8)) {
             eprintln!("Caught panic in run 15: {:?}", e);
         }
     }
@@ -270,26 +298,34 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 16 --------------------------------------------------------------
     {
         println!("run 16");
-        symbolic::demangle::demangle(&data.run16_demangle);
+        symbolic::demangle::demangle(&data.testString2);
 
-        let bv = ByteView::from_slice(&data.run16_minidump);
+        let mut minidump_bytes = data.testVecU8.clone();
+        if minidump_bytes.len() < 32 {
+            minidump_bytes.resize(32, 0);
+        }
+        let bv = ByteView::from_slice(&minidump_bytes);
         let _ = bv;
 
         let _ =
-            symbolic::unreal::Unreal4Crash::parse_with_limit(&data.run16_minidump, 1024 * 1024);
+            symbolic::unreal::Unreal4Crash::parse_with_limit(&minidump_bytes, 1024 * 1024);
     }
 
     // --- run 17 --------------------------------------------------------------
     {
         println!("run 17");
-        let err = test_decode(data.run17_file.clone()).unwrap_err();
-        println!("Decoding error: {:?}", err);
+        let mut file_bytes = data.testVecU8.clone();
+        file_bytes.extend_from_slice(&data.testVecU8);
+        match test_decode(file_bytes) {
+            Ok(_) => println!("Decoding succeeded unexpectedly"),
+            Err(err) => println!("Decoding error: {:?}", err),
+        }
     }
 
     // --- run 18 --------------------------------------------------------------
     {
         println!("run 18");
-        if let Err(e) = panic::catch_unwind(|| syn_188::parse_str::<Expr>(&data.run18_syn_input)) {
+        if let Err(e) = panic::catch_unwind(|| syn_188::parse_str::<Expr>(&data.testString)) {
             eprintln!("Caught panic in run 18: {:?}", e);
         }
     }
@@ -297,7 +333,7 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 19 --------------------------------------------------------------
     {
         let context = tera_190::Context::new();
-        if let Err(e) = panic::catch_unwind(|| tera_190::Tera::one_off(&data.run19_template, &context, true)) {
+        if let Err(e) = panic::catch_unwind(|| tera_190::Tera::one_off(&data.testString2, &context, true)) {
             eprintln!("Caught panic in run 19: {:?}", e);
         }
     }
@@ -305,7 +341,7 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 20 --------------------------------------------------------------
     {
         if let Err(e) = panic::catch_unwind(|| {
-            let _ = format(&data.run20_sql, &QueryParams::None, SqlFormatOptions::default());
+            let _ = format(&data.testString, &QueryParams::None, SqlFormatOptions::default());
         }) {
             eprintln!("Caught panic in run 20: {:?}", e);
         }

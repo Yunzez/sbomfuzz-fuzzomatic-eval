@@ -14,47 +14,67 @@ use std::ffi::CString;
 use std::io::{self, Cursor};
 use std::str;
 
+// pub struct BenchmarkData {
+//     pub run2_block: Vec<u8>,
+//     pub run3_number: String,
+//     pub run4_pdf_data: Vec<u8>,
+//     pub run5_xref_input: Vec<u8>,
+//     pub run6_signature: [u8; 8],
+//     pub run7_plist: Vec<u8>,
+//     pub run8_png: Vec<u8>,
+//     pub run9_table: Vec<Vec<(String, u8)>>,
+//     pub run10_text: String,
+//     pub run10_crashing: String,
+//     pub run11_bytes: Vec<u8>,
+//     pub run11_doc: String,
+// }
+//
+// impl Default for BenchmarkData {
+//     fn default() -> Self {
+//         Self {
+//             run2_block: b"\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19".to_vec(),
+//             run3_number: "2067736026".to_owned(),
+//             run4_pdf_data: b"%PDF-startxref>".to_vec(),
+//             run5_xref_input: b"0 1\n0000000000 65535 f\n".to_vec(),
+//             run6_signature: [5, 2, 2, 11, 0, 2, 0, 0],
+//             run7_plist: b"bplist00\x10\x01".to_vec(),
+//             run8_png: b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\xdac\xf8\x0f\x00\x01\x01\x01\x00\x18\xdd\x03\x1a\x00\x00\x00\x00IEND\xaeB`\x82".to_vec(),
+//             run9_table: vec![
+//                 vec![
+//                     ("Cell1".to_string(), 0),
+//                     ("Cell2".to_string(), 1),
+//                     ("Cell3".to_string(), 2),
+//                 ],
+//                 vec![
+//                     ("Cell4".to_string(), 0),
+//                     ("Cell5".to_string(), 1),
+//                     ("Cell6".to_string(), 2),
+//                 ],
+//             ],
+//             run10_text: "01010101".to_owned(),
+//             run10_crashing: r"[]([]([]([](\u{1b}]([](|AN\u{b}|||[](&&&#0000000000000000000000\u{1}\u{0}\u{0}\u{0}[]([]([]([](|||||||[](&&&#0000000000000000000\u{1000000000}[]([]([](|||||||[](&&&#0018446744073709551([](|||||||[](&&&#001844674407370955161615\u{1}\u{0}\u{0}\u{0}[]([]\u{112}\u{32}\u{00372}\u{008}\u{005156194}&#&#&#&".to_owned(),
+//             run11_bytes: b"\x00".to_vec(),
+//             run11_doc: "<!D>".to_owned(),
+//         }
+//     }
+// }
+
 pub struct BenchmarkData {
-    pub run2_block: Vec<u8>,
-    pub run3_number: String,
-    pub run4_pdf_data: Vec<u8>,
-    pub run5_xref_input: Vec<u8>,
-    pub run6_signature: [u8; 8],
-    pub run7_plist: Vec<u8>,
-    pub run8_png: Vec<u8>,
-    pub run9_table: Vec<Vec<(String, u8)>>,
-    pub run10_text: String,
-    pub run10_crashing: String,
-    pub run11_bytes: Vec<u8>,
-    pub run11_doc: String,
+    pub testString: String,
+    pub testString2: String,
+    pub testVecU8: Vec<u8>,
+    pub testU64: u64,
+    pub testKey: [u8; 64],
 }
 
 impl Default for BenchmarkData {
     fn default() -> Self {
         Self {
-            run2_block: b"\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19".to_vec(),
-            run3_number: "2067736026".to_owned(),
-            run4_pdf_data: b"%PDF-startxref>".to_vec(),
-            run5_xref_input: b"0 1\n0000000000 65535 f\n".to_vec(),
-            run6_signature: [5, 2, 2, 11, 0, 2, 0, 0],
-            run7_plist: b"bplist00\x10\x01".to_vec(),
-            run8_png: b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\xdac\xf8\x0f\x00\x01\x01\x01\x00\x18\xdd\x03\x1a\x00\x00\x00\x00IEND\xaeB`\x82".to_vec(),
-            run9_table: vec![
-                vec![
-                    ("Cell1".to_string(), 0),
-                    ("Cell2".to_string(), 1),
-                    ("Cell3".to_string(), 2),
-                ],
-                vec![
-                    ("Cell4".to_string(), 0),
-                    ("Cell5".to_string(), 1),
-                    ("Cell6".to_string(), 2),
-                ],
-            ],
-            run10_text: "01010101".to_owned(),
-            run10_crashing: r"[]([]([]([](\u{1b}]([](|AN\u{b}|||[](&&&#0000000000000000000000\u{1}\u{0}\u{0}\u{0}[]([]([]([](|||||||[](&&&#0000000000000000000\u{1000000000}[]([]([](|||||||[](&&&#0018446744073709551([](|||||||[](&&&#001844674407370955161615\u{1}\u{0}\u{0}\u{0}[]([]\u{112}\u{32}\u{00372}\u{008}\u{005156194}&#&#&#&".to_owned(),
-            run11_bytes: b"\x00".to_vec(),
-            run11_doc: "<!D>".to_owned(),
+            testString: "Hello, Benchmark!".to_owned(),
+            testString2: "Another test string".to_owned(),
+            testVecU8: vec![1, 2, 3, 4, 5],
+            testU64: 42,
+            testKey: [0u8; 64],
         }
     }
 }
@@ -96,24 +116,30 @@ pub fn benchmark(data: &BenchmarkData) {
 
     // --- run 2 ---------------------------------------------------------------
     {
-        let _ = parse_block(&data.run2_block);
+        let _ = parse_block(&data.testVecU8);
     }
 
     // --- run 3 ---------------------------------------------------------------
     {
-        let _ = phonenumber::parse(None, data.run3_number.clone());
+        let digits: String = data.testString.chars().filter(|c| c.is_ascii_digit()).collect();
+        let input = if digits.is_empty() {
+            String::from("1234567890")
+        } else {
+            digits
+        };
+        let _ = phonenumber::parse(None, input);
     }
 
     // --- run 4 ---------------------------------------------------------------
     {
         println!("running pdf_112");
-        Pdf112File::from_data(data.run4_pdf_data.as_ref());
+        Pdf112File::from_data(data.testVecU8.as_ref());
     }
 
     // --- run 5 ---------------------------------------------------------------
     {
         println!("running pdf_115");
-        let mut lexer = pdf_115::parser::Lexer::new(&data.run5_xref_input);
+        let mut lexer = pdf_115::parser::Lexer::new(&data.testVecU8);
         let resolve = pdf_115::object::NoResolve;
 
         match pdf_115::parser::parse_xref_stream_and_trailer(&mut lexer, &resolve) {
@@ -150,29 +176,35 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 6 ---------------------------------------------------------------
     {
         println!("running pgp");
-        let _ = pgp::Signature::from_slice(pgp::types::Version::New, &data.run6_signature);
+        let mut signature = [0u8; 8];
+        signature.copy_from_slice(&data.testKey[..8]);
+        let _ = pgp::Signature::from_slice(pgp::types::Version::New, &signature);
     }
 
     // --- run 7 ---------------------------------------------------------------
     {
         println!("running plist");
-        let cursor = Cursor::new(data.run7_plist.clone());
+        let cursor = Cursor::new(data.testVecU8.clone());
         let _ = plist::Value::from_reader(cursor);
     }
 
     // --- run 8 ---------------------------------------------------------------
     {
-        let _ = decode_png(&data.run8_png);
+        let _ = decode_png(&data.testVecU8);
     }
 
     // --- run 9 ---------------------------------------------------------------
     {
-        run_table(data.run9_table.clone());
+        let table_data = vec![
+            vec![(data.testString.clone(), 0u8)],
+            vec![(data.testString2.clone(), 1u8)],
+        ];
+        run_table(table_data);
     }
 
     // --- run 10 --------------------------------------------------------------
     {
-        let text = data.run10_text.clone();
+        let text = data.testString.clone();
         let _ = pulldown_cmark_128::Parser::new(&text);
 
         let mut output = String::new();
@@ -184,12 +216,12 @@ pub fn benchmark(data: &BenchmarkData) {
 
         for _ in pulldown_cmark_133::Parser::new_ext(&text, opts) {}
 
-        let _ = data.run10_crashing;
+        let _ = data.testString2.clone();
     }
 
     // --- run 11 --------------------------------------------------------------
     {
-        let cursor = Cursor::new(data.run11_bytes.clone());
+        let cursor = Cursor::new(data.testVecU8.clone());
         let mut reader = Reader::from_reader(cursor);
         reader.trim_text(true);
         let mut buf = Vec::new();
@@ -200,7 +232,7 @@ pub fn benchmark(data: &BenchmarkData) {
             }
         }
 
-        let mut reader = Reader::from_str(&data.run11_doc);
+        let mut reader = Reader::from_str(&data.testString);
         let mut buf = Vec::new();
         let _ = reader.read_event(&mut buf);
         let _ = reader.read_event(&mut buf);

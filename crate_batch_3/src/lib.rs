@@ -46,39 +46,59 @@ struct Array {
     a: i32,
 }
 
+// pub struct BenchmarkData {
+//     pub run1_input: Vec<u8>,
+//     pub run2_pdf: Vec<u8>,
+//     pub run3_data: Vec<u8>,
+//     pub run4_text: Vec<u8>,
+//     pub run5_panic_b64: String,
+//     pub run5_data_b64: String,
+//     pub run9_data: Vec<u8>,
+//     pub run10_data: Vec<u8>,
+//     pub run12_data: Vec<u8>,
+//     pub run13_data: Vec<u8>,
+//     pub run14_data: Vec<u8>,
+//     pub run14_mutdata: Vec<u8>,
+// }
+//
+// impl Default for BenchmarkData {
+//     fn default() -> Self {
+//         Self {
+//             run1_input: b"\x04\x04\x04\x04:\x1az*\xfc\x06\x01\x90\x01\x06\x01".to_vec(),
+//             run2_pdf: b"%PDF-1.5\n\
+//     000000028100 000 n \n\
+//     0000000338 00000 n \n\
+//     %%EOF".to_vec(),
+//             run3_data: b"\x04\x22\x4D\x18\x64\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00".to_vec(),
+//             run4_text: b"Some data to compress and decompress using lz4_flex".to_vec(),
+//             run5_panic_b64: "TURNUJOnAAAA/2ZmZFlmZmZmZkAKCmZwCrv///8K/wo=".to_owned(),
+//             run5_data_b64: "U29tZSB2YWxpZCBkYXRhIHN0cmluZw==".to_owned(),
+//             run9_data: include_bytes!("run9_data.bin").to_vec(),
+//             run10_data: include_bytes!("run10_data.bin").to_vec(),
+//             run12_data: vec![0u8; 1024],
+//             run13_data: include_bytes!("run13_data.bin").to_vec(),
+//             run14_data: include_bytes!("run14_data.bin").to_vec(),
+//             run14_mutdata: include_bytes!("run14_mutdata.bin").to_vec(),
+//         }
+//     }
+// }
+
 pub struct BenchmarkData {
-    pub run1_input: Vec<u8>,
-    pub run2_pdf: Vec<u8>,
-    pub run3_data: Vec<u8>,
-    pub run4_text: Vec<u8>,
-    pub run5_panic_b64: String,
-    pub run5_data_b64: String,
-    pub run9_data: Vec<u8>,
-    pub run10_data: Vec<u8>,
-    pub run12_data: Vec<u8>,
-    pub run13_data: Vec<u8>,
-    pub run14_data: Vec<u8>,
-    pub run14_mutdata: Vec<u8>,
+    pub testString: String,
+    pub testString2: String,
+    pub testVecU8: Vec<u8>,
+    pub testU64: u64,
+    pub testKey: [u8; 64],
 }
 
 impl Default for BenchmarkData {
     fn default() -> Self {
         Self {
-            run1_input: b"\x04\x04\x04\x04:\x1az*\xfc\x06\x01\x90\x01\x06\x01".to_vec(),
-            run2_pdf: b"%PDF-1.5\n\
-    000000028100 000 n \n\
-    0000000338 00000 n \n\
-    %%EOF".to_vec(),
-            run3_data: b"\x04\x22\x4D\x18\x64\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00".to_vec(),
-            run4_text: b"Some data to compress and decompress using lz4_flex".to_vec(),
-            run5_panic_b64: "TURNUJOnAAAA/2ZmZFlmZmZmZkAKCmZwCrv///8K/wo=".to_owned(),
-            run5_data_b64: "U29tZSB2YWxpZCBkYXRhIHN0cmluZw==".to_owned(),
-            run9_data: include_bytes!("run9_data.bin").to_vec(),
-            run10_data: include_bytes!("run10_data.bin").to_vec(),
-            run12_data: vec![0u8; 1024],
-            run13_data: include_bytes!("run13_data.bin").to_vec(),
-            run14_data: include_bytes!("run14_data.bin").to_vec(),
-            run14_mutdata: include_bytes!("run14_mutdata.bin").to_vec(),
+            testString: "Hello, Benchmark!".to_owned(),
+            testString2: "Another test string".to_owned(),
+            testVecU8: vec![1, 2, 3, 4, 5],
+            testU64: 42,
+            testKey: [0u8; 64],
         }
     }
 }
@@ -93,18 +113,18 @@ pub fn main() {
 pub fn benchmark(data: &BenchmarkData) {
     // --- run 1 ---------------------------------------------------------------
     {
-        let mut decoder = DeflateDecoder::new(Cursor::new(&data.run1_input[..]));
+        let mut decoder = DeflateDecoder::new(Cursor::new(&data.testVecU8[..]));
         let _ = io::copy(&mut decoder, &mut io::sink());
     }
 
     // --- run 2 ---------------------------------------------------------------
     {
-        let _ = Document::load_mem(&data.run2_pdf);
+        let _ = Document::load_mem(&data.testVecU8);
     }
 
     // --- run 3 ---------------------------------------------------------------
     {
-        let input = Cursor::new(data.run3_data.clone());
+        let input = Cursor::new(data.testVecU8.clone());
         let mut output = Vec::new();
 
         if let Ok(reader) = LZ4FrameReader::new(input) {
@@ -114,20 +134,18 @@ pub fn benchmark(data: &BenchmarkData) {
 
     // --- run 4 ---------------------------------------------------------------
     {
-        let compressed = compress_prepend_size(&data.run4_text);
-        let _ = decompress_size_prepended(&compressed).unwrap();
+        let compressed = compress_prepend_size(&data.testVecU8);
+        let _ = decompress_size_prepended(&compressed);
     }
 
     // --- run 5 ---------------------------------------------------------------
     {
-        let panic_data = base64::decode(data.run5_panic_b64.clone()).unwrap();
-        let decoded = match base64::decode(data.run5_data_b64.clone()) {
-            Ok(bytes) => bytes,
-            Err(e) => {
-                eprintln!("Failed to decode base64: {}", e);
-                return;
-            }
-        };
+        let panic_b64 = base64::encode(&data.testVecU8);
+        let panic_data = base64::decode(panic_b64).unwrap_or_default();
+
+        let encoded_payload = base64::encode(data.testString2.as_bytes());
+        let decoded = base64::decode(&encoded_payload)
+            .unwrap_or_else(|_| data.testString2.as_bytes().to_vec());
         Minidump85::read(decoded.clone());
 
         if let Ok(dump) = Minidump::read(decoded.clone()) {
@@ -171,13 +189,13 @@ pub fn benchmark(data: &BenchmarkData) {
 
     // --- run 9 ---------------------------------------------------------------
     {
-        let mut cursor = Cursor::new(data.run9_data.clone());
+        let mut cursor = Cursor::new(data.testVecU8.clone());
         let _ = Tag::read_from(&mut cursor);
     }
 
     // --- run 10 --------------------------------------------------------------
     {
-        let data_str = std::str::from_utf8(&data.run10_data).unwrap_or("");
+        let data_str = std::str::from_utf8(&data.testVecU8).unwrap_or("");
         let _ = Parser::new().parse(data_str);
     }
 
@@ -191,22 +209,28 @@ pub fn benchmark(data: &BenchmarkData) {
             )
         );
 
-        let _ = parser01(&data.run12_data);
+        let mut buffer = data.testVecU8.clone();
+        if buffer.len() < 1024 {
+            buffer.resize(1024, 0);
+        }
+        let _ = parser01(&buffer);
     }
 
     // --- run 13 --------------------------------------------------------------
     {
-        let _ = npy::from_bytes::<Array>(&data.run13_data);
+        let _ = npy::from_bytes::<Array>(&data.testVecU8);
     }
 
     // --- run 14 --------------------------------------------------------------
     {
-        let mut cursor = Cursor::new(data.run14_data.clone());
+        let mut cursor = Cursor::new(data.testVecU8.clone());
         let _ = Ntfs::new(&mut cursor);
 
-        let mut cursor = Cursor::new(data.run14_mutdata.clone());
-        if let Ok(mut fs) = Ntfs::new(&mut cursor) {
-            if let Err(e) = fs.read_upcase_table(&mut cursor) {
+        let mut mutated = data.testVecU8.clone();
+        mutated.extend_from_slice(&data.testVecU8);
+        let mut cursor_mut = Cursor::new(mutated);
+        if let Ok(mut fs) = Ntfs::new(&mut cursor_mut) {
+            if let Err(e) = fs.read_upcase_table(&mut cursor_mut) {
                 eprintln!("Failed to read upcase table: {}", e);
             }
         } else {
