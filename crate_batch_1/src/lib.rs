@@ -90,11 +90,45 @@ impl Default for BenchmarkData{
 
 pub fn main() {
     println!("crate batch 1 benchmark starting");
-    let data = BenchmarkData::default();
-    benchmark(&data);
+    let input = vec![1, 2, 3, 4, 5];
+    benchmark(&input);
 }
 
-pub fn benchmark(data: &BenchmarkData) {
+pub fn benchmark(input: &[u8]) {
+    let seed_bytes = if input.is_empty() {
+        vec![0]
+    } else {
+        input.to_vec()
+    };
+
+    let cookie_value: String = seed_bytes
+        .iter()
+        .map(|b| char::from(b'a' + (b % 26)))
+        .collect();
+    let session_cookie = format!("session={}", if cookie_value.is_empty() { "bench" } else { &cookie_value });
+
+    let hex_string: String = seed_bytes.iter().map(|b| format!("{:02x}", b)).collect();
+    let hashed_like = if hex_string.is_empty() {
+        "benchmark".to_owned()
+    } else {
+        hex_string
+    };
+
+    let mut test_key = [0u8; 64];
+    for (idx, byte) in test_key.iter_mut().enumerate() {
+        *byte = seed_bytes[idx % seed_bytes.len()];
+    }
+
+    let weight = seed_bytes.iter().fold(0u64, |acc, &b| acc.wrapping_add(b as u64)) + 1;
+
+    let data = BenchmarkData {
+        testString: session_cookie,
+        testString2: hashed_like,
+        testVecU8: seed_bytes,
+        testU64: weight,
+        testKey: test_key,
+    };
+
     // --- run 1 ---------------------------------------------------------------
     {
         let abi_lines = data.testString.lines();
