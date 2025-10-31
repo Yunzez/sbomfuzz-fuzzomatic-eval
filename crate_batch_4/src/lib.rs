@@ -108,38 +108,35 @@ fn run_table(data: Vec<Vec<(String, u8)>>) {
 }
 
 pub fn benchmark(data: &BenchmarkData) {
+    benchmark_misc();
+    benchmark_vec_u8(&data.testVecU8, &data.testKey);
+    benchmark_strings(&data.testString, &data.testString2, &data.testVecU8);
+}
+
+fn benchmark_misc() {
     // --- run 1 ---------------------------------------------------------------
     {
         // Original code is commented out.
         let _ = CString::new("noop").unwrap();
     }
+}
 
+fn benchmark_vec_u8(bytes: &[u8], key: &[u8; 64]) {
     // --- run 2 ---------------------------------------------------------------
     {
-        let _ = parse_block(&data.testVecU8);
-    }
-
-    // --- run 3 ---------------------------------------------------------------
-    {
-        let digits: String = data.testString.chars().filter(|c| c.is_ascii_digit()).collect();
-        let input = if digits.is_empty() {
-            String::from("1234567890")
-        } else {
-            digits
-        };
-        let _ = phonenumber::parse(None, input);
+        let _ = parse_block(bytes);
     }
 
     // --- run 4 ---------------------------------------------------------------
     {
         println!("running pdf_112");
-        Pdf112File::from_data(data.testVecU8.as_ref());
+        Pdf112File::from_data(bytes);
     }
 
     // --- run 5 ---------------------------------------------------------------
     {
         println!("running pdf_115");
-        let mut lexer = pdf_115::parser::Lexer::new(&data.testVecU8);
+        let mut lexer = pdf_115::parser::Lexer::new(bytes);
         let resolve = pdf_115::object::NoResolve;
 
         match pdf_115::parser::parse_xref_stream_and_trailer(&mut lexer, &resolve) {
@@ -177,34 +174,47 @@ pub fn benchmark(data: &BenchmarkData) {
     {
         println!("running pgp");
         let mut signature = [0u8; 8];
-        signature.copy_from_slice(&data.testKey[..8]);
+        signature.copy_from_slice(&key[..8]);
         let _ = pgp::Signature::from_slice(pgp::types::Version::New, &signature);
     }
 
     // --- run 7 ---------------------------------------------------------------
     {
         println!("running plist");
-        let cursor = Cursor::new(data.testVecU8.clone());
+        let cursor = Cursor::new(bytes.to_vec());
         let _ = plist::Value::from_reader(cursor);
     }
 
     // --- run 8 ---------------------------------------------------------------
     {
-        let _ = decode_png(&data.testVecU8);
+        let _ = decode_png(bytes);
+    }
+}
+
+fn benchmark_strings(str: &str, str2: &str, bytes: &[u8]) {
+    // --- run 3 ---------------------------------------------------------------
+    {
+        let digits: String = str.chars().filter(|c| c.is_ascii_digit()).collect();
+        let input = if digits.is_empty() {
+            String::from("1234567890")
+        } else {
+            digits
+        };
+        let _ = phonenumber::parse(None, input);
     }
 
     // --- run 9 ---------------------------------------------------------------
     {
         let table_data = vec![
-            vec![(data.testString.clone(), 0u8)],
-            vec![(data.testString2.clone(), 1u8)],
+            vec![(str.to_owned(), 0u8)],
+            vec![(str2.to_owned(), 1u8)],
         ];
         run_table(table_data);
     }
 
     // --- run 10 --------------------------------------------------------------
     {
-        let text = data.testString.clone();
+        let text = str.to_owned();
         let _ = pulldown_cmark_128::Parser::new(&text);
 
         let mut output = String::new();
@@ -216,12 +226,12 @@ pub fn benchmark(data: &BenchmarkData) {
 
         for _ in pulldown_cmark_133::Parser::new_ext(&text, opts) {}
 
-        let _ = data.testString2.clone();
+        let _ = str2.to_owned();
     }
 
     // --- run 11 --------------------------------------------------------------
     {
-        let cursor = Cursor::new(data.testVecU8.clone());
+        let cursor = Cursor::new(bytes.to_vec());
         let mut reader = Reader::from_reader(cursor);
         reader.trim_text(true);
         let mut buf = Vec::new();
@@ -232,7 +242,7 @@ pub fn benchmark(data: &BenchmarkData) {
             }
         }
 
-        let mut reader = Reader::from_str(&data.testString);
+        let mut reader = Reader::from_str(str);
         let mut buf = Vec::new();
         let _ = reader.read_event(&mut buf);
         let _ = reader.read_event(&mut buf);

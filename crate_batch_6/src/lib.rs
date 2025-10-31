@@ -168,80 +168,49 @@ fn get_arg_types(data: &[u8]) -> Option<[ArgumentType; 16]> {
 }
 
 pub fn benchmark(data: &BenchmarkData) {
+    benchmark_template_and_strings(&data.testString, &data.testString2, data.testU64);
+    benchmark_vec_u8(&data.testVecU8);
+    benchmark_misc();
+}
+
+fn benchmark_template_and_strings(str1: &str, str2: &str, num: u64) {
     // --- run 1 ---------------------------------------------------------------
     {
         println!("run 1");
         let mut tpl = TinyTemplate::new();
-        let _ = tpl.add_template("template", &data.testString);
-    }
-
-    // --- run 2 ---------------------------------------------------------------
-    {
-        println!("run 2");
-        if let Ok(line) = std::str::from_utf8(&data.testVecU8) {
-            let _: Result<Task, _> = line.parse();
-        }
-    }
-
-    // --- run 3 ---------------------------------------------------------------
-    {
-        println!("run 3");
-        let language = LanguageType::Vue;
-        let config = Config {
-            treat_doc_strings_as_comments: Some(true),
-            ..Config::default()
-        };
-
-        let result =
-            panic::catch_unwind(|| language.parse_from_slice(data.testVecU8.clone(), &config));
-
-        match result {
-            Ok(_) => println!("Parsed successfully"),
-            Err(_) => eprintln!("❌ Caught panic in `parse_from_slice`!"),
-        }
+        let _ = tpl.add_template("template", str1);
     }
 
     // --- run 4 ---------------------------------------------------------------
     {
         println!("run 4");
-        let first_input = format!("key = \"{}\"", data.testString);
+        let first_input = format!("key = \"{}\"", str1);
         let value_first: toml::Value = toml::from_str(&first_input).unwrap();
         println!("{:?}", value_first);
         println!("{}", toml::to_string(&value_first).unwrap());
 
-        let second_input = format!("other = \"{}\"", data.testString2);
+        let second_input = format!("other = \"{}\"", str2);
         let value_second = toml::from_str::<toml::Value>(&second_input)
-            .unwrap_or_else(|_| toml::Value::String(data.testString2.clone()));
+            .unwrap_or_else(|_| toml::Value::String(str2.to_owned()));
         println!("{:?}", value_second);
         match toml::to_string(&value_second) {
             Ok(serialized) => println!("{}", serialized),
             Err(e) => eprintln!("Error serializing TOML: {}", e),
         }
 
-        let bracket_count = ((data.testU64 as usize) % 8).max(1);
+        let bracket_count = ((num as usize) % 8).max(1);
         let brackets = "[".repeat(bracket_count);
         let input_string = format!("x={}", &brackets);
         let _: Result<toml::Value, _> = toml::from_str(&input_string);
     }
 
-    // --- run 5 ---------------------------------------------------------------
-    {
-        println!("run 5");
-        match ttf_parser::Face::from_slice(&data.testVecU8, 0) {
-            Ok(face) => {
-                let _ = face.outline_glyph(ttf_parser::GlyphId(0), &mut Builder);
-            }
-            Err(e) => eprintln!("Error parsing font: {:?}", e),
-        }
-    }
-
     // --- run 6 ---------------------------------------------------------------
     {
         println!("run 6");
-        let byte_unit_input = if data.testString.contains('B') {
-            data.testString.clone()
+        let byte_unit_input = if str1.contains('B') {
+            str1.to_owned()
         } else {
-            format!("{} B", data.testU64.max(1))
+            format!("{} B", num.max(1))
         };
         match byte_unit_input.parse::<ByteUnit>() {
             Ok(byte_unit) => println!("Parsed byte unit: {:?}", byte_unit),
@@ -252,10 +221,10 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 7 ---------------------------------------------------------------
     {
         println!("run 7");
-        let grapheme_text = if data.testString.is_empty() {
-            data.testString2.clone()
+        let grapheme_text = if str1.is_empty() {
+            str2.to_owned()
         } else {
-            data.testString.clone()
+            str1.to_owned()
         };
         let forward = UnicodeSegmentation::graphemes(grapheme_text.as_str(), true).collect::<Vec<_>>();
         let forward_reversed = forward.clone().into_iter().rev().collect::<Vec<_>>();
@@ -264,7 +233,7 @@ pub fn benchmark(data: &BenchmarkData) {
             .collect::<Vec<_>>();
         assert_eq!(forward_reversed, reverse);
 
-        let word_bounds_text = format!("{} {}", data.testString, data.testString2);
+        let word_bounds_text = format!("{} {}", str1, str2);
         let forward = word_bounds_text
             .split_word_bounds()
             .collect::<Vec<_>>();
@@ -275,11 +244,11 @@ pub fn benchmark(data: &BenchmarkData) {
 
     // --- run 9 ---------------------------------------------------------------
     {
-        let base_url = format!("http://{}", data.testString.replace(' ', ""));
+        let base_url = format!("http://{}", str1.replace(' ', ""));
         let _ = Url::parse(&base_url);
 
-        let edge_candidate = if data.testString2.contains("://") {
-            data.testString2.clone()
+        let edge_candidate = if str2.contains("://") {
+            str2.to_owned()
         } else {
             "p://:/".to_string()
         };
@@ -299,25 +268,53 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 10 --------------------------------------------------------------
     {
         println!("run 10");
-        let _ = panic::catch_unwind(|| Uuid::parse_str(&data.testString).unwrap());
+        let _ = panic::catch_unwind(|| Uuid::parse_str(str1).unwrap());
+    }
+}
+
+fn benchmark_vec_u8(bytes: &[u8]) {
+    // --- run 2 ---------------------------------------------------------------
+    {
+        println!("run 2");
+        if let Ok(line) = std::str::from_utf8(bytes) {
+            let _: Result<Task, _> = line.parse();
+        }
     }
 
-    // --- run 11 --------------------------------------------------------------
+    // --- run 3 ---------------------------------------------------------------
     {
-        println!("run 11");
-        let request = vial::Request::from_reader(std::io::empty());
-        match request {
-            Ok(req) => {
-                vial::util::percent_decode(req.path());
+        println!("run 3");
+        let language = LanguageType::Vue;
+        let config = Config {
+            treat_doc_strings_as_comments: Some(true),
+            ..Config::default()
+        };
+
+        let bytes_owned = bytes.to_vec();
+        let result =
+            panic::catch_unwind(|| language.parse_from_slice(bytes_owned, &config));
+
+        match result {
+            Ok(_) => println!("Parsed successfully"),
+            Err(_) => eprintln!("❌ Caught panic in `parse_from_slice`!"),
+        }
+    }
+
+    // --- run 5 ---------------------------------------------------------------
+    {
+        println!("run 5");
+        match ttf_parser::Face::from_slice(bytes, 0) {
+            Ok(face) => {
+                let _ = face.outline_glyph(ttf_parser::GlyphId(0), &mut Builder);
             }
-            Err(e) => eprintln!("Error creating request: {:?}", e),
+            Err(e) => eprintln!("Error parsing font: {:?}", e),
         }
     }
 
     // --- run 12 --------------------------------------------------------------
     {
         println!("run 12");
-        let mut subtitle_bytes = data.testVecU8.clone();
+        let mut subtitle_bytes = bytes.to_vec();
         subtitle_bytes.push(0);
         for _ in vobsub::subtitles(&subtitle_bytes) {
             // iterate
@@ -327,7 +324,7 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 13 --------------------------------------------------------------
     {
         println!("run 13");
-        let mut message_data = data.testVecU8.clone();
+        let mut message_data = bytes.to_vec();
         if message_data.len() < 48 {
             message_data.resize(48, 0);
         }
@@ -350,20 +347,20 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 14 --------------------------------------------------------------
     {
         println!("run 14");
-        let mut cursor = std::io::Cursor::new(data.testVecU8.clone());
+        let mut cursor = std::io::Cursor::new(bytes.to_vec());
         let _ = ws::Frame::parse(&mut cursor);
     }
 
     // --- run 15 --------------------------------------------------------------
     {
         let decoder = yaxpeax_x86::amd64::InstDecoder::default();
-        drop(decoder.decode_slice(&data.testVecU8));
+        drop(decoder.decode_slice(bytes));
     }
 
     // --- run 16 --------------------------------------------------------------
     {
         println!("running run 16");
-        let mut zip_bytes = data.testVecU8.clone();
+        let mut zip_bytes = bytes.to_vec();
         if zip_bytes.len() < 4 {
             zip_bytes.extend_from_slice(&[0u8; 4]);
         }
@@ -377,6 +374,20 @@ pub fn benchmark(data: &BenchmarkData) {
         for i in 0..archive.len() {
             let file = archive.by_index(i).unwrap();
             let _size = file.bytes().count();
+        }
+    }
+}
+
+fn benchmark_misc() {
+    // --- run 11 --------------------------------------------------------------
+    {
+        println!("run 11");
+        let request = vial::Request::from_reader(std::io::empty());
+        match request {
+            Ok(req) => {
+                vial::util::percent_decode(req.path());
+            }
+            Err(e) => eprintln!("Error creating request: {:?}", e),
         }
     }
 }

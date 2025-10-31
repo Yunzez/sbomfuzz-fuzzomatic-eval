@@ -98,107 +98,6 @@ pub fn main() {
 pub fn benchmark(data: &BenchmarkData) {
     benchmark_string(&data.testString, &data.testString2);
     benchmark_vec_u8(&data.testVecU8, data.testU64, &data.testKey);
-
-    
-
-    // --- run 8 ---------------------------------------------------------------
-    {
-        let s_str = match std::str::from_utf8(&data.testVecU8) {
-            Ok(value) => value,
-            Err(err) => {
-                eprintln!("Invalid UTF-8 sequence: {}", err);
-                ""
-            }
-        };
-        if !s_str.is_empty() {
-            let _ = cranelift_reader::parse_test(s_str);
-        }
-    }
-
-    // --- run 9 ---------------------------------------------------------------
-    {
-        let _ = csscolorparser::parse(&data.testString);
-    }
-
-    // --- run 10 --------------------------------------------------------------
-    {
-        let mut parser_input = cssparser::ParserInput::new(&data.testString2);
-        let mut parser = cssparser::Parser::new(&mut parser_input);
-
-        match parser.next_including_whitespace_and_comments() {
-            Ok(token) => println!("Parsed token: {:?}", token),
-            Err(err) => println!("Parsing error: {:?}", err),
-        }
-    }
-
-    // --- run 11 --------------------------------------------------------------
-    {
-        let str_result = std::str::from_utf8(data.testVecU8.as_slice());
-        if let Ok(s) = str_result {
-            let mut siv = cursive::default();
-
-            siv.add_layer(
-                cursive::views::Dialog::around(cursive::views::TextView::new(s))
-                    .title("Cursive")
-                    .button("Quit", |s| s.quit()),
-            );
-
-            siv.run();
-        } else {
-            println!("not valid utf8");
-        }
-    }
-
-    // --- run 12 --------------------------------------------------------------
-    {
-        match der::Decoder::new(&data.testVecU8) {
-            Ok(mut decoder) => match der::asn1::Any::decode(&mut decoder) {
-                Ok(decoded) => println!("Decoded successfully: {:?}", decoded),
-                Err(err) => eprintln!("Error decoding: {}", err),
-            },
-            Err(err) => eprintln!("Failed to create Decoder: {}", err),
-        }
-    }
-
-    // --- run 13 --------------------------------------------------------------
-    {
-        let _ = der_parser::parse_der(&data.testVecU8);
-    }
-
-    // --- run 14 --------------------------------------------------------------
-    {
-        let _ = exmex::parse_with_default_ops::<f64>(&data.testString).unwrap();
-    }
-
-    // --- run 15 --------------------------------------------------------------
-    {
-        let storage = Cursor::new(data.testVecU8.clone());
-        let _ = fatfs::FileSystem::new(storage, fatfs::FsOptions::new());
-    }
-
-    // --- run 16 --------------------------------------------------------------
-    {
-        if let Ok(mut stream) =
-            flac::Stream::<flac::ByteStream>::from_buffer(&data.testVecU8)
-        {
-            let _ = stream.info();
-            let _ = stream.metadata();
-            let mut iter = stream.iter::<i8>();
-            while iter.next().is_some() {}
-        }
-    }
-
-    // --- run 17 --------------------------------------------------------------
-    {
-        let mut buf_reader = BufReader::new(Cursor::new(data.testVecU8.clone()));
-
-        match flatgeobuf::FgbReader::open(&mut buf_reader) {
-            Ok(mut reader) => {
-                let _ = reader.header();
-            }
-            Err(err) => eprintln!("Failed to open FgbReader: {}", err),
-        }
-    }
 }
 
 
@@ -235,6 +134,27 @@ pub fn benchmark_string(str: &str, str2: &str) {
         print!("chrono_16");
         let _ = chrono_16::DateTime::parse_from_rfc2822(str);
        
+    }
+
+    // --- run 9 ---------------------------------------------------------------
+    {
+        let _ = csscolorparser::parse(str);
+    }
+
+    // --- run 10 --------------------------------------------------------------
+    {
+        let mut parser_input = cssparser::ParserInput::new(str2);
+        let mut parser = cssparser::Parser::new(&mut parser_input);
+
+        match parser.next_including_whitespace_and_comments() {
+            Ok(token) => println!("Parsed token: {:?}", token),
+            Err(err) => println!("Parsing error: {:?}", err),
+        }
+    }
+
+    // --- run 14 --------------------------------------------------------------
+    {
+        let _ = exmex::parse_with_default_ops::<f64>(str).unwrap();
     }
 
 
@@ -288,10 +208,86 @@ pub fn benchmark_vec_u8(data: &Vec<u8>, num: u64, key: &[u8; 64]) {
     {
         let _cookie = cookie::Cookie::parse("test".clone()).expect("failed to parse cookie");
 
-        let key = cookie::Key::from(data);
+        let key = cookie::Key::from(key);
 
         let mut jar = cookie::CookieJar::new();
 
         let _signed = jar.signed_mut(&key);
+    }
+
+    // --- run 8 ---------------------------------------------------------------
+    {
+        let s_str = match std::str::from_utf8(data.as_slice()) {
+            Ok(value) => value,
+            Err(err) => {
+                eprintln!("Invalid UTF-8 sequence: {}", err);
+                ""
+            }
+        };
+        if !s_str.is_empty() {
+            let _ = cranelift_reader::parse_test(s_str);
+        }
+    }
+
+    // --- run 11 --------------------------------------------------------------
+    {
+        let str_result = std::str::from_utf8(data.as_slice());
+        if let Ok(s) = str_result {
+            let mut siv = cursive::default();
+
+            siv.add_layer(
+                cursive::views::Dialog::around(cursive::views::TextView::new(s))
+                    .title("Cursive")
+                    .button("Quit", |s| s.quit()),
+            );
+
+            siv.run();
+        } else {
+            println!("not valid utf8");
+        }
+    }
+
+    // --- run 12 --------------------------------------------------------------
+    {
+        match der::Decoder::new(data.as_slice()) {
+            Ok(mut decoder) => match der::asn1::Any::decode(&mut decoder) {
+                Ok(decoded) => println!("Decoded successfully: {:?}", decoded),
+                Err(err) => eprintln!("Error decoding: {}", err),
+            },
+            Err(err) => eprintln!("Failed to create Decoder: {}", err),
+        }
+    }
+
+    // --- run 13 --------------------------------------------------------------
+    {
+        let _ = der_parser::parse_der(data.as_slice());
+    }
+
+    // --- run 15 --------------------------------------------------------------
+    {
+        let storage = Cursor::new(data.clone());
+        let _ = fatfs::FileSystem::new(storage, fatfs::FsOptions::new());
+    }
+
+    // --- run 16 --------------------------------------------------------------
+    {
+        if let Ok(mut stream) = flac::Stream::<flac::ByteStream>::from_buffer(data) {
+            let _ = stream.info();
+            let _ = stream.metadata();
+            let mut iter = stream.iter::<i8>();
+            while iter.next().is_some() {}
+        }
+    }
+
+    // --- run 17 --------------------------------------------------------------
+    {
+        let mut buf_reader = BufReader::new(Cursor::new(data.clone()));
+
+        match flatgeobuf::FgbReader::open(&mut buf_reader) {
+            Ok(mut reader) => {
+                let _ = reader.header();
+            }
+            Err(err) => eprintln!("Failed to open FgbReader: {}", err),
+        }
     }
 }

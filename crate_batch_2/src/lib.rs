@@ -82,6 +82,12 @@ pub fn main() {
 }
 
 pub fn benchmark(data: &BenchmarkData) {
+    benchmark_artifacts();
+    benchmark_vec_u8(&data.testVecU8);
+    benchmark_strings(&data.testString, &data.testString2);
+}
+
+fn benchmark_artifacts() {
     // --- run 1 ---------------------------------------------------------------
     {
         let paths = read_dir(".").unwrap();
@@ -94,16 +100,18 @@ pub fn benchmark(data: &BenchmarkData) {
             let _ = Flif::decode(Cursor::new(&contents)).map(|img| img.get_raw_pixels());
         }
     }
+}
 
+fn benchmark_vec_u8(data: &[u8]) {
     // --- run 2 ---------------------------------------------------------------
     {
-        let font_bytes = data.testVecU8.clone();
+        let font_bytes = data.to_vec();
         if let Ok(font) = fontdue::Font::from_bytes(font_bytes, fontdue::FontSettings::default()) {
             let (_metrics, _bitmap) = font.rasterize('g', 17.0);
         }
         println!("Hello, world!");
 
-        let second_font_bytes = data.testVecU8.clone();
+        let second_font_bytes = data.to_vec();
         if let Ok(font) = fontdue::Font::from_bytes(second_font_bytes, fontdue::FontSettings::default()) {
             println!("Font loaded successfully");
         } else {
@@ -114,7 +122,6 @@ pub fn benchmark(data: &BenchmarkData) {
     // --- run 3 ---------------------------------------------------------------
     {
         let mut coords: Vec<_> = data
-            .testVecU8
             .chunks(2)
             .map(|chunk| {
                 let x = chunk.get(0).copied().unwrap_or(0) as f64;
@@ -134,51 +141,22 @@ pub fn benchmark(data: &BenchmarkData) {
 
     // --- run 4 ---------------------------------------------------------------
     {
-        if let Ok(index) = Index::parse_sysv_index(&data.testVecU8) {
+        if let Ok(index) = Index::parse_sysv_index(data) {
             println!("Parsed index: {:?}", index);
         } else {
             println!("Failed to parse index");
         }
     }
 
-    // --- run 5 ---------------------------------------------------------------
-    {
-        let context = Vec::<()>::new();
-        let hbs = Handlebars::new();
-        match hbs.render_template(&data.testString, &context) {
-            Ok(rendered) => println!("Handlebars rendered: {}", rendered),
-            Err(error) => println!("Handlebars error: {}", error),
-        }
-
-        let tpl = Handlebars::new();
-        let _ = tpl.render_template(&data.testString2, &Vec::<()>::new());
-    }
-
     // --- run 6 ---------------------------------------------------------------
     {
-        let sample: HjsonResult<Map<String, Value>> = serde_hjson::from_slice(&data.testVecU8);
+        let sample: HjsonResult<Map<String, Value>> = serde_hjson::from_slice(data);
         println!("serde_hjson sample: {:?}", sample);
-    }
-
-    // --- run 7 ---------------------------------------------------------------
-    {
-        let name = Name::parse(&data.testString);
-        println!("Parsed name: {:?}", name);
-    }
-
-    // --- run 8 ---------------------------------------------------------------
-    {
-        let primary = data.testString.clone();
-        let fallback = data.testString2.clone();
-        let url = Url::parse(&primary)
-            .or_else(|_| Url::parse(&fallback))
-            .unwrap_or_else(|_| Url::parse("http://example.com").unwrap());
-        let _uri = Uri::from(url);
     }
 
     // --- run 9 ---------------------------------------------------------------
     {
-        let cursor = Cursor::new(data.testVecU8.clone());
+        let cursor = Cursor::new(data.to_vec());
         let _ = image::webp::WebPDecoder::new(cursor);
     }
 
@@ -186,10 +164,41 @@ pub fn benchmark(data: &BenchmarkData) {
     {
         let mut options = DecodeOptions::new();
         options.set_color_output(gif::ColorOutput::RGBA);
-        let cursor = Cursor::new(data.testVecU8.clone());
+        let cursor = Cursor::new(data.to_vec());
         if let Ok(mut decoder) = options.read_info(cursor) {
             while let Ok(Some(_frame)) = decoder.read_next_frame() {}
         }
+    }
+}
+
+fn benchmark_strings(str: &str, str2: &str) {
+    // --- run 5 ---------------------------------------------------------------
+    {
+        let context = Vec::<()>::new();
+        let hbs = Handlebars::new();
+        match hbs.render_template(str, &context) {
+            Ok(rendered) => println!("Handlebars rendered: {}", rendered),
+            Err(error) => println!("Handlebars error: {}", error),
+        }
+
+        let tpl = Handlebars::new();
+        let _ = tpl.render_template(str2, &Vec::<()>::new());
+    }
+
+    // --- run 7 ---------------------------------------------------------------
+    {
+        let name = Name::parse(str);
+        println!("Parsed name: {:?}", name);
+    }
+
+    // --- run 8 ---------------------------------------------------------------
+    {
+        let primary = str.to_owned();
+        let fallback = str2.to_owned();
+        let url = Url::parse(&primary)
+            .or_else(|_| Url::parse(&fallback))
+            .unwrap_or_else(|_| Url::parse("http://example.com").unwrap());
+        let _uri = Uri::from(url);
     }
 
     // --- run 11 --------------------------------------------------------------
@@ -208,6 +217,6 @@ pub fn benchmark(data: &BenchmarkData) {
         let mut buf = vec![0; decoder.total_bytes() as usize];
         let _ = decoder.read_image(&mut buf);
 
-        let _ = fancy_regex::Regex::new(&data.testString);
+        let _ = fancy_regex::Regex::new(str);
     }
 }

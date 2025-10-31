@@ -145,9 +145,17 @@ fn test_decode(file: Vec<u8>) -> SymphoniaResult<()> {
 }
 
 pub fn benchmark(data: &BenchmarkData) {
+    benchmark_vec_u8(&data.testVecU8, data.testU64);
+    benchmark_numeric(data.testU64);
+    benchmark_string_ops(&data.testString, &data.testString2, &data.testVecU8);
+    benchmark_misc();
+}
+use syn_188::Expr;
+
+fn benchmark_vec_u8(bytes: &[u8], num: u64) {
     // --- run 1 ---------------------------------------------------------------
     {
-        let decoded = match decode::<Open>(data.testVecU8.as_slice()) {
+        let decoded = match decode::<Open>(bytes) {
             Ok(v) => v,
             Err(e) => {
                 eprintln!("Decoding failed: {:?}", e);
@@ -163,10 +171,78 @@ pub fn benchmark(data: &BenchmarkData) {
         }
     }
 
+    // --- run 7 ---------------------------------------------------------------
+    {
+        let sample_bytes = if bytes.is_empty() {
+            vec![b'i', b'n']
+        } else {
+            bytes.to_vec()
+        };
+        match serde_yaml::from_slice::<serde_yaml::Value>(&sample_bytes) {
+            Ok(value) => println!("Parsed YAML successfully: {:?}", value),
+            Err(err) => eprintln!("Failed to parse YAML: {}", err),
+        }
+
+        let number_input = num.to_string();
+        let deserialized: Number = serde_yaml::from_str(&number_input).unwrap();
+        let serialized_yaml = serde_yaml::to_string(&deserialized).unwrap();
+        let roundtrip: Number = serde_yaml::from_str(&serialized_yaml).unwrap();
+
+        println!("Deserialized from YAML (50.): {:?}", deserialized);
+        println!("Serialized to YAML: {}", serialized_yaml);
+        println!("Deserialized again: {:?}", roundtrip);
+
+        assert_eq!(deserialized, roundtrip, "Roundtrip failed!");
+    }
+
+    // --- run 8 ---------------------------------------------------------------
+    {
+        if let Err(e) = panic::catch_unwind(|| simple_asn1::from_der(bytes)) {
+            eprintln!("Caught panic in run 8: {:?}", e);
+        }
+    }
+
+    // --- run 9 ---------------------------------------------------------------
+    {
+        let mut decoder = Decoder::new();
+        match decoder.decompress_vec(bytes) {
+            Ok(_) => println!("Decompression succeeded."),
+            Err(e) => eprintln!("Decompression failed: {:?}", e),
+        }
+    }
+
+    // --- run 14 --------------------------------------------------------------
+    {
+        println!("run 14");
+        if let Err(e) = panic::catch_unwind(|| ssh_parser::parse_ssh_packet(bytes)) {
+            eprintln!("Caught panic in run 14: {:?}", e);
+        }
+    }
+
+    // --- run 15 --------------------------------------------------------------
+    {
+        if let Err(e) = panic::catch_unwind(|| movie::parse_movie(bytes)) {
+            eprintln!("Caught panic in run 15: {:?}", e);
+        }
+    }
+
+    // --- run 17 --------------------------------------------------------------
+    {
+        println!("run 17");
+        let mut file_bytes = bytes.to_vec();
+        file_bytes.extend_from_slice(bytes);
+        match test_decode(file_bytes) {
+            Ok(_) => println!("Decoding succeeded unexpectedly"),
+            Err(err) => println!("Decoding error: {:?}", err),
+        }
+    }
+}
+
+fn benchmark_numeric(num: u64) {
     // --- run 3 ---------------------------------------------------------------
     {
         println!("running line 152");
-        let repeat = (data.testU64 as usize).min(16);
+        let repeat = (num as usize).min(16);
         let nested = "{}".repeat(repeat);
         let result: Result<ron::Value, _> = ron::from_str(&nested);
         match result {
@@ -183,66 +259,91 @@ pub fn benchmark(data: &BenchmarkData) {
         println!("{:?}", serialized);
     }
 
+    // --- run 12 --------------------------------------------------------------
+    {
+        println!("run 12");
+        let repeat = (num as usize).min(32);
+        let sql = "(".repeat(repeat);
+        let dialect = GenericDialect {};
+
+        if let Err(e) = panic::catch_unwind(|| Parser::parse_sql(&dialect, &sql)) {
+            eprintln!("Caught panic in run 12: {:?}", e);
+        }
+    }
+}
+
+fn benchmark_string_ops(str1: &str, str2: &str, bytes: &[u8]) {
     // --- run 4 ---------------------------------------------------------------
     {
-        let mut cursor = Cursor::new(data.testString.clone());
+        let mut cursor = Cursor::new(str1.to_owned());
         let _ = Ini::read_from(&mut cursor).unwrap();
     }
 
     // --- run 5 ---------------------------------------------------------------
     {
-        if let Err(e) = panic::catch_unwind(|| rustc_demangle::demangle(&data.testString)) {
+        if let Err(e) = panic::catch_unwind(|| rustc_demangle::demangle(str1)) {
             eprintln!("Caught panic in run 5: {:?}", e);
         }
     }
 
     // --- run 6 ---------------------------------------------------------------
     {
-        if let Err(e) = panic::catch_unwind(|| VersionReq::parse(&data.testString2).unwrap()) {
+        if let Err(e) = panic::catch_unwind(|| VersionReq::parse(str2).unwrap()) {
             eprintln!("Caught panic in run 6: {:?}", e);
         }
     }
 
-    // --- run 7 ---------------------------------------------------------------
+    // --- run 13 --------------------------------------------------------------
     {
-        let sample_bytes = if data.testVecU8.is_empty() {
-            vec![b'i', b'n']
-        } else {
-            data.testVecU8.clone()
-        };
-        match serde_yaml::from_slice::<serde_yaml::Value>(&sample_bytes) {
-            Ok(value) => println!("Parsed YAML successfully: {:?}", value),
-            Err(err) => eprintln!("Failed to parse YAML: {}", err),
-        }
-
-        let number_input = data.testU64.to_string();
-        let deserialized: Number = serde_yaml::from_str(&number_input).unwrap();
-        let serialized_yaml = serde_yaml::to_string(&deserialized).unwrap();
-        let roundtrip: Number = serde_yaml::from_str(&serialized_yaml).unwrap();
-
-        println!("Deserialized from YAML (50.): {:?}", deserialized);
-        println!("Serialized to YAML: {}", serialized_yaml);
-        println!("Deserialized again: {:?}", roundtrip);
-
-        assert_eq!(deserialized, roundtrip, "Roundtrip failed!");
-    }
-
-    // --- run 8 ---------------------------------------------------------------
-    {
-        if let Err(e) = panic::catch_unwind(|| simple_asn1::from_der(&data.testVecU8)) {
-            eprintln!("Caught panic in run 8: {:?}", e);
+        println!("run 13");
+        if let Err(e) = panic::catch_unwind(|| ssh_keys::openssh::parse_private_key(str1)) {
+            eprintln!("Caught panic in run 13: {:?}", e);
         }
     }
 
-    // --- run 9 ---------------------------------------------------------------
+    // --- run 16 --------------------------------------------------------------
     {
-        let mut decoder = Decoder::new();
-        match decoder.decompress_vec(&data.testVecU8) {
-            Ok(_) => println!("Decompression succeeded."),
-            Err(e) => eprintln!("Decompression failed: {:?}", e),
+        println!("run 16");
+        symbolic::demangle::demangle(str2);
+
+        let mut minidump_bytes = bytes.to_vec();
+        if minidump_bytes.len() < 32 {
+            minidump_bytes.resize(32, 0);
+        }
+        let bv = ByteView::from_slice(&minidump_bytes);
+        let _ = bv;
+
+        let _ =
+            symbolic::unreal::Unreal4Crash::parse_with_limit(&minidump_bytes, 1024 * 1024);
+    }
+
+    // --- run 18 --------------------------------------------------------------
+    {
+        println!("run 18");
+        if let Err(e) = panic::catch_unwind(|| syn_188::parse_str::<Expr>(str1)) {
+            eprintln!("Caught panic in run 18: {:?}", e);
         }
     }
 
+    // --- run 19 --------------------------------------------------------------
+    {
+        let context = tera_190::Context::new();
+        if let Err(e) = panic::catch_unwind(|| tera_190::Tera::one_off(str2, &context, true)) {
+            eprintln!("Caught panic in run 19: {:?}", e);
+        }
+    }
+
+    // --- run 20 --------------------------------------------------------------
+    {
+        if let Err(e) = panic::catch_unwind(|| {
+            let _ = format(str1, &QueryParams::None, SqlFormatOptions::default());
+        }) {
+            eprintln!("Caught panic in run 20: {:?}", e);
+        }
+    }
+}
+
+fn benchmark_misc() {
     // --- run 11 --------------------------------------------------------------
     {
         println!("run 11");
@@ -259,92 +360,4 @@ pub fn benchmark(data: &BenchmarkData) {
             Err(_) => println!("Symbol conversion failed as expected"),
         }
     }
-
-    // --- run 12 --------------------------------------------------------------
-    {
-        println!("run 12");
-        let repeat = (data.testU64 as usize).min(32);
-        let sql = "(".repeat(repeat);
-        let dialect = GenericDialect {};
-
-        if let Err(e) = panic::catch_unwind(|| Parser::parse_sql(&dialect, &sql)) {
-            eprintln!("Caught panic in run 12: {:?}", e);
-        }
-    }
-
-    // --- run 13 --------------------------------------------------------------
-    {
-        println!("run 13");
-        if let Err(e) = panic::catch_unwind(|| ssh_keys::openssh::parse_private_key(&data.testString)) {
-            eprintln!("Caught panic in run 13: {:?}", e);
-        }
-    }
-
-    // --- run 14 --------------------------------------------------------------
-    {
-        println!("run 14");
-        if let Err(e) = panic::catch_unwind(|| ssh_parser::parse_ssh_packet(&data.testVecU8)) {
-            eprintln!("Caught panic in run 14: {:?}", e);
-        }
-    }
-
-    // --- run 15 --------------------------------------------------------------
-    {
-        if let Err(e) = panic::catch_unwind(|| movie::parse_movie(&data.testVecU8)) {
-            eprintln!("Caught panic in run 15: {:?}", e);
-        }
-    }
-
-    // --- run 16 --------------------------------------------------------------
-    {
-        println!("run 16");
-        symbolic::demangle::demangle(&data.testString2);
-
-        let mut minidump_bytes = data.testVecU8.clone();
-        if minidump_bytes.len() < 32 {
-            minidump_bytes.resize(32, 0);
-        }
-        let bv = ByteView::from_slice(&minidump_bytes);
-        let _ = bv;
-
-        let _ =
-            symbolic::unreal::Unreal4Crash::parse_with_limit(&minidump_bytes, 1024 * 1024);
-    }
-
-    // --- run 17 --------------------------------------------------------------
-    {
-        println!("run 17");
-        let mut file_bytes = data.testVecU8.clone();
-        file_bytes.extend_from_slice(&data.testVecU8);
-        match test_decode(file_bytes) {
-            Ok(_) => println!("Decoding succeeded unexpectedly"),
-            Err(err) => println!("Decoding error: {:?}", err),
-        }
-    }
-
-    // --- run 18 --------------------------------------------------------------
-    {
-        println!("run 18");
-        if let Err(e) = panic::catch_unwind(|| syn_188::parse_str::<Expr>(&data.testString)) {
-            eprintln!("Caught panic in run 18: {:?}", e);
-        }
-    }
-
-    // --- run 19 --------------------------------------------------------------
-    {
-        let context = tera_190::Context::new();
-        if let Err(e) = panic::catch_unwind(|| tera_190::Tera::one_off(&data.testString2, &context, true)) {
-            eprintln!("Caught panic in run 19: {:?}", e);
-        }
-    }
-
-    // --- run 20 --------------------------------------------------------------
-    {
-        if let Err(e) = panic::catch_unwind(|| {
-            let _ = format(&data.testString, &QueryParams::None, SqlFormatOptions::default());
-        }) {
-            eprintln!("Caught panic in run 20: {:?}", e);
-        }
-    }
 }
-use syn_188::Expr;

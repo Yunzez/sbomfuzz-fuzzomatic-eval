@@ -111,20 +111,25 @@ pub fn main() {
 }
 
 pub fn benchmark(data: &BenchmarkData) {
+    benchmark_vec_u8(&data.testVecU8);
+    benchmark_string_operations(&data.testString2, &data.testVecU8);
+}
+
+fn benchmark_vec_u8(bytes: &[u8]) {
     // --- run 1 ---------------------------------------------------------------
     {
-        let mut decoder = DeflateDecoder::new(Cursor::new(&data.testVecU8[..]));
+        let mut decoder = DeflateDecoder::new(Cursor::new(bytes));
         let _ = io::copy(&mut decoder, &mut io::sink());
     }
 
     // --- run 2 ---------------------------------------------------------------
     {
-        let _ = Document::load_mem(&data.testVecU8);
+        let _ = Document::load_mem(bytes);
     }
 
     // --- run 3 ---------------------------------------------------------------
     {
-        let input = Cursor::new(data.testVecU8.clone());
+        let input = Cursor::new(bytes.to_vec());
         let mut output = Vec::new();
 
         if let Ok(reader) = LZ4FrameReader::new(input) {
@@ -134,18 +139,81 @@ pub fn benchmark(data: &BenchmarkData) {
 
     // --- run 4 ---------------------------------------------------------------
     {
-        let compressed = compress_prepend_size(&data.testVecU8);
+        let compressed = compress_prepend_size(bytes);
         let _ = decompress_size_prepended(&compressed);
     }
 
+    // --- run 8 ---------------------------------------------------------------
+    {
+        // Original implementation returns immediately; nothing to execute here.
+    }
+
+    // --- run 9 ---------------------------------------------------------------
+    {
+        let mut cursor = Cursor::new(bytes.to_vec());
+        let _ = Tag::read_from(&mut cursor);
+    }
+
+    // --- run 10 --------------------------------------------------------------
+    {
+        let data_str = std::str::from_utf8(bytes).unwrap_or("");
+        let _ = Parser::new().parse(data_str);
+    }
+
+    // --- run 12 --------------------------------------------------------------
+    {
+        named!(parser01<&[u8], ()>,
+            do_parse!(
+                hdr: take!(1) >>
+                data: take!(1023) >>
+                ( () )
+            )
+        );
+
+        let mut buffer = bytes.to_vec();
+        if buffer.len() < 1024 {
+            buffer.resize(1024, 0);
+        }
+        let _ = parser01(&buffer);
+    }
+
+    // --- run 13 --------------------------------------------------------------
+    {
+        let _ = npy::from_bytes::<Array>(bytes);
+    }
+
+    // --- run 14 --------------------------------------------------------------
+    {
+        let mut cursor = Cursor::new(bytes.to_vec());
+        let _ = Ntfs::new(&mut cursor);
+
+        let mut mutated = bytes.to_vec();
+        mutated.extend_from_slice(bytes);
+        let mut cursor_mut = Cursor::new(mutated);
+        if let Ok(mut fs) = Ntfs::new(&mut cursor_mut) {
+            if let Err(e) = fs.read_upcase_table(&mut cursor_mut) {
+                eprintln!("Failed to read upcase table: {}", e);
+            }
+        } else {
+            eprintln!("Failed to create NTFS filesystem");
+        }
+    }
+
+    // --- run 15 --------------------------------------------------------------
+    {
+        // Intentionally left blank as in source.
+    }
+}
+
+fn benchmark_string_operations(str_data: &str, bytes: &[u8]) {
     // --- run 5 ---------------------------------------------------------------
     {
-        let panic_b64 = base64::encode(&data.testVecU8);
+        let panic_b64 = base64::encode(bytes);
         let panic_data = base64::decode(panic_b64).unwrap_or_default();
 
-        let encoded_payload = base64::encode(data.testString2.as_bytes());
+        let encoded_payload = base64::encode(str_data.as_bytes());
         let decoded = base64::decode(&encoded_payload)
-            .unwrap_or_else(|_| data.testString2.as_bytes().to_vec());
+            .unwrap_or_else(|_| str_data.as_bytes().to_vec());
         Minidump85::read(decoded.clone());
 
         if let Ok(dump) = Minidump::read(decoded.clone()) {
@@ -180,66 +248,5 @@ pub fn benchmark(data: &BenchmarkData) {
         }
 
         let _ = panic_data;
-    }
-
-    // --- run 8 ---------------------------------------------------------------
-    {
-        // Original implementation returns immediately; nothing to execute here.
-    }
-
-    // --- run 9 ---------------------------------------------------------------
-    {
-        let mut cursor = Cursor::new(data.testVecU8.clone());
-        let _ = Tag::read_from(&mut cursor);
-    }
-
-    // --- run 10 --------------------------------------------------------------
-    {
-        let data_str = std::str::from_utf8(&data.testVecU8).unwrap_or("");
-        let _ = Parser::new().parse(data_str);
-    }
-
-    // --- run 12 --------------------------------------------------------------
-    {
-        named!(parser01<&[u8], ()>,
-            do_parse!(
-                hdr: take!(1) >>
-                data: take!(1023) >>
-                ( () )
-            )
-        );
-
-        let mut buffer = data.testVecU8.clone();
-        if buffer.len() < 1024 {
-            buffer.resize(1024, 0);
-        }
-        let _ = parser01(&buffer);
-    }
-
-    // --- run 13 --------------------------------------------------------------
-    {
-        let _ = npy::from_bytes::<Array>(&data.testVecU8);
-    }
-
-    // --- run 14 --------------------------------------------------------------
-    {
-        let mut cursor = Cursor::new(data.testVecU8.clone());
-        let _ = Ntfs::new(&mut cursor);
-
-        let mut mutated = data.testVecU8.clone();
-        mutated.extend_from_slice(&data.testVecU8);
-        let mut cursor_mut = Cursor::new(mutated);
-        if let Ok(mut fs) = Ntfs::new(&mut cursor_mut) {
-            if let Err(e) = fs.read_upcase_table(&mut cursor_mut) {
-                eprintln!("Failed to read upcase table: {}", e);
-            }
-        } else {
-            eprintln!("Failed to create NTFS filesystem");
-        }
-    }
-
-    // --- run 15 --------------------------------------------------------------
-    {
-        // Intentionally left blank as in source.
     }
 }
