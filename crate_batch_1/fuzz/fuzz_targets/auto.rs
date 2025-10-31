@@ -2,10 +2,12 @@
 
 extern crate libfuzzer_sys;
 
+use crate_batch_1::main;
 use libfuzzer_sys::fuzz_target;
-use {{ crate_name }}{{ import_path }};
 
 fuzz_target!(|data: &[u8]| {
     // fuzzed code goes here
-    {{ usage_path }}(data);
+    if let Ok(_input) = std::str::from_utf8(data) {
+        main();
+    }
 });
