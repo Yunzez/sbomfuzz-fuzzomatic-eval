@@ -2,6 +2,8 @@
 name = "crate_batch_2"
 version = "0.1.0"
 edition = "2021"
+# [lib]
+# path = "src/benchmark.rs"
 
 [dependencies]
 flif={git="https://github.com/ZoeyR/flif.rs", rev="a3e7784"}

@@ -5,6 +5,9 @@ edition = "2021"
 
 [patch.crates-io]
 
+# [lib]
+# path = "src/benchmark.rs"
+
 
 [dependencies]
 rasn = { git = "https://github.com/librasn/rasn", rev = "d9a9219" }

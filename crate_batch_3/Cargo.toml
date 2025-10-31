@@ -3,6 +3,9 @@ name = "crate_batch_3"
 version = "0.1.0"
 edition = "2021"
 
+# [lib]
+# path = "src/benchmark.rs"
+
 [dependencies]
 libflate={git="https://github.com/sile/libflate", rev="7e0e56f"}
 # pnet='0.16.0' # ! libpnet
@@ -38,6 +41,8 @@ npy={git = "https://github.com/potocpav/npy-rs", rev = "42ea9dd"}
 npy_derive={package = "npy-derive", git = "https://github.com/potocpav/npy-rs", rev = "42ea9dd"}
 
 ntfs={git = "https://github.com/ColinFinck/ntfs", rev = "0783cbd"}
-num_traits={package = "num-traits" ,git = "https://github.com/rust-num/num", rev = "d273495"}
-num_bigint={package = "num-bigint" ,git = "https://github.com/rust-num/num", rev = "d273495", default-features = false, features = []}
+# ntp={git = "https://github.com/JeffBelgum/ntp", rev = "b175b57"}
+# num={git = "https://github.com/rust-num/num", rev = "d273495"}
+# num-traits={git = "https://github.com/rust-num/num", rev = "d273495"}
+# num-bigint={git = "https://github.com/rust-num/num", rev = "d273495", default-features = false, features = []}
 base64 = "0.22.1"

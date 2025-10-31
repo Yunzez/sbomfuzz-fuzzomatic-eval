@@ -3,6 +3,9 @@ name = "crate_batch_4"
 version = "0.1.0"
 edition = "2021"
 
+# [lib]
+# path = "src/benchmark.rs"
+
 [dependencies]
 pancurses = "0.17"
 pcapng = "1.0.0"
