@@ -5,13 +5,6 @@ test = false
 doc = false
 bench = false
 
-[[bin]]
-name = "auto"
-path = "fuzz_targets/auto.rs"
-test = false
-doc = false
-bench = false
-
 [package]
 name = "crate_batch_2-fuzz"
 version = "0.0.0"
@@ -23,16 +16,13 @@ libfuzzer-sys = "0.4"
 geo = "0.29.3"
 serde = "*"
 kalker = "2.1.1"
+arbitrary = { version = "1", features = ["derive"] }
 
 [workspace]
 members = []
 
 [package.metadata]
 cargo-fuzz = true
-
-[dependencies.arbitrary]
-version = "1"
-features = ["derive"]
 
 [dependencies.crate_batch_2]
 path = ".."
@@ -104,3 +94,31 @@ rev = "52aea4d"
 package = "just"
 git = "https://github.com/casey/just"
 rev = "8371ada"
+
+[[bin]]
+name = "benchmark_vec_u8"
+path = "fuzz_targets/benchmark_vec_u8.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "Arbitrary"
+path = "fuzz_targets/Arbitrary.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8"
+path = "fuzz_targets/from_utf8.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_1"
+path = "fuzz_targets/from_utf8_1.rs"
+test = false
+doc = false
+

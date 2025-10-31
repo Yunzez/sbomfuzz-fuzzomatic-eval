@@ -112,8 +112,8 @@ pub fn main() {
     println!("crate batch 5 ending");
 }
 
-fn test_decode(file: Vec<u8>) -> SymphoniaResult<()> {
-    let data = Cursor::new(file);
+pub fn test_decode(file: &[u8]) -> SymphoniaResult<()> {
+    let data = Cursor::new(file.to_vec());
     let mss = MediaSourceStream::new(Box::new(data), Default::default());
 
     let probed = get_probe().format(
@@ -152,7 +152,7 @@ pub fn benchmark(data: &BenchmarkData) {
 }
 use syn_188::Expr;
 
-fn benchmark_vec_u8(bytes: &[u8], num: u64) {
+pub fn benchmark_vec_u8(bytes: &[u8], num: u64) {
     // --- run 1 ---------------------------------------------------------------
     {
         let decoded = match decode::<Open>(bytes) {
@@ -231,14 +231,14 @@ fn benchmark_vec_u8(bytes: &[u8], num: u64) {
         println!("run 17");
         let mut file_bytes = bytes.to_vec();
         file_bytes.extend_from_slice(bytes);
-        match test_decode(file_bytes) {
+    match test_decode(&file_bytes) {
             Ok(_) => println!("Decoding succeeded unexpectedly"),
             Err(err) => println!("Decoding error: {:?}", err),
         }
     }
 }
 
-fn benchmark_numeric(num: u64) {
+pub fn benchmark_numeric(num: u64) {
     // --- run 3 ---------------------------------------------------------------
     {
         println!("running line 152");
@@ -272,7 +272,7 @@ fn benchmark_numeric(num: u64) {
     }
 }
 
-fn benchmark_string_ops(str1: &str, str2: &str, bytes: &[u8]) {
+pub fn benchmark_string_ops(str1: &str, str2: &str, bytes: &[u8]) {
     // --- run 4 ---------------------------------------------------------------
     {
         let mut cursor = Cursor::new(str1.to_owned());
@@ -343,7 +343,7 @@ fn benchmark_string_ops(str1: &str, str2: &str, bytes: &[u8]) {
     }
 }
 
-fn benchmark_misc() {
+pub fn benchmark_misc() {
     // --- run 11 --------------------------------------------------------------
     {
         println!("run 11");

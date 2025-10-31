@@ -115,7 +115,7 @@ pub fn benchmark(data: &BenchmarkData) {
     benchmark_string_operations(&data.testString2, &data.testVecU8);
 }
 
-fn benchmark_vec_u8(bytes: &[u8]) {
+pub fn benchmark_vec_u8(bytes: &[u8]) {
     // --- run 1 ---------------------------------------------------------------
     {
         let mut decoder = DeflateDecoder::new(Cursor::new(bytes));
@@ -205,7 +205,7 @@ fn benchmark_vec_u8(bytes: &[u8]) {
     }
 }
 
-fn benchmark_string_operations(str_data: &str, bytes: &[u8]) {
+pub fn benchmark_string_operations(str_data: &str, bytes: &[u8]) {
     // --- run 5 ---------------------------------------------------------------
     {
         let panic_b64 = base64::encode(bytes);

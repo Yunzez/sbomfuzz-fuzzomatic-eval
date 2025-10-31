@@ -14,7 +14,7 @@ pub struct Arguments {
 }
 
 fuzz_target!(|arguments: Arguments| {
-    // Convert the u8 to a Vec<u8>
-    let vec_arg1 = vec![arguments.arg1];
-    benchmark_vec_u8(&vec_arg1, arguments.arg2, &arguments.arg3);
+    // Convert arg1 to a Vec<u8>
+    let arg1_vec = vec![arguments.arg1];
+    benchmark_vec_u8(&arg1_vec, arguments.arg2, &arguments.arg3);
 });

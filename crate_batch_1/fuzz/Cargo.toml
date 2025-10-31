@@ -124,9 +124,3 @@ test = false
 doc = false
 
 
-[[bin]]
-name = "from_utf8"
-path = "fuzz_targets/from_utf8.rs"
-test = false
-doc = false
-

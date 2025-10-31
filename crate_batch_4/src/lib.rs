@@ -5,7 +5,7 @@ use pdf_115::file::File as Pdf115File;
 use phonenumber;
 use pgp;
 use plist;
-use prettytable::{format::TableFormat, Cell, Row, Table};
+use prettytable::{Cell, Row, Table};
 use pulldown_cmark_128;
 use pulldown_cmark_131;
 use pulldown_cmark_133;
@@ -67,6 +67,15 @@ pub struct BenchmarkData {
     pub testKey: [u8; 64],
 }
 
+pub struct TableCellData {
+    pub text: String,
+    pub alignment: u8,
+}
+
+pub struct TableRowData {
+    pub cells: Vec<TableCellData>,
+}
+
 impl Default for BenchmarkData {
     fn default() -> Self {
         Self {
@@ -86,7 +95,7 @@ pub fn main() {
     println!("crate batch 4 benchmark ending");
 }
 
-fn align_from_u8(x: u8) -> prettytable::format::Alignment {
+pub fn align_from_u8(x: u8) -> prettytable::format::Alignment {
     match x {
         0 => prettytable::format::Alignment::LEFT,
         1 => prettytable::format::Alignment::CENTER,
@@ -94,12 +103,13 @@ fn align_from_u8(x: u8) -> prettytable::format::Alignment {
     }
 }
 
-fn run_table(data: Vec<Vec<(String, u8)>>) {
+pub fn run_table(data: &[TableRowData]) {
     let mut pt = Table::new();
     for row in data {
         let cells = row
-            .into_iter()
-            .map(|x| Cell::new_align(&x.0, align_from_u8(x.1)))
+            .cells
+            .iter()
+            .map(|cell| Cell::new_align(&cell.text, align_from_u8(cell.alignment)))
             .collect();
         pt.add_row(Row::new(cells));
     }
@@ -121,7 +131,7 @@ fn benchmark_misc() {
     }
 }
 
-fn benchmark_vec_u8(bytes: &[u8], key: &[u8; 64]) {
+pub fn benchmark_vec_u8(bytes: &[u8], key: &[u8]) {
     // --- run 2 ---------------------------------------------------------------
     {
         let _ = parse_block(bytes);
@@ -174,7 +184,10 @@ fn benchmark_vec_u8(bytes: &[u8], key: &[u8; 64]) {
     {
         println!("running pgp");
         let mut signature = [0u8; 8];
-        signature.copy_from_slice(&key[..8]);
+        let copy_len = key.len().min(signature.len());
+        if copy_len > 0 {
+            signature[..copy_len].copy_from_slice(&key[..copy_len]);
+        }
         let _ = pgp::Signature::from_slice(pgp::types::Version::New, &signature);
     }
 
@@ -191,7 +204,7 @@ fn benchmark_vec_u8(bytes: &[u8], key: &[u8; 64]) {
     }
 }
 
-fn benchmark_strings(str: &str, str2: &str, bytes: &[u8]) {
+pub fn benchmark_strings(str: &str, str2: &str, bytes: &[u8]) {
     // --- run 3 ---------------------------------------------------------------
     {
         let digits: String = str.chars().filter(|c| c.is_ascii_digit()).collect();
@@ -205,11 +218,21 @@ fn benchmark_strings(str: &str, str2: &str, bytes: &[u8]) {
 
     // --- run 9 ---------------------------------------------------------------
     {
-        let table_data = vec![
-            vec![(str.to_owned(), 0u8)],
-            vec![(str2.to_owned(), 1u8)],
+        let table_data = [
+            TableRowData {
+                cells: vec![TableCellData {
+                    text: str.to_owned(),
+                    alignment: 0u8,
+                }],
+            },
+            TableRowData {
+                cells: vec![TableCellData {
+                    text: str2.to_owned(),
+                    alignment: 1u8,
+                }],
+            },
         ];
-        run_table(table_data);
+        run_table(&table_data);
     }
 
     // --- run 10 --------------------------------------------------------------
@@ -249,7 +272,7 @@ fn benchmark_strings(str: &str, str2: &str, bytes: &[u8]) {
     }
 }
 
-fn decode_png(data: &[u8]) -> io::Result<Vec<u8>> {
+pub fn decode_png(data: &[u8]) -> io::Result<Vec<u8>> {
     let limits = png::Limits { bytes: 1 << 16 };
     let decoder = png::Decoder::new_with_limits(data, limits);
     let (info, mut reader) = decoder.read_info()?;

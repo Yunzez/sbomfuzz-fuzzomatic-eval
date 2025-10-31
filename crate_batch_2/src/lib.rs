@@ -87,7 +87,7 @@ pub fn benchmark(data: &BenchmarkData) {
     benchmark_strings(&data.testString, &data.testString2);
 }
 
-fn benchmark_artifacts() {
+pub fn benchmark_artifacts() {
     // --- run 1 ---------------------------------------------------------------
     {
         let paths = read_dir(".").unwrap();
@@ -102,7 +102,7 @@ fn benchmark_artifacts() {
     }
 }
 
-fn benchmark_vec_u8(data: &[u8]) {
+pub fn benchmark_vec_u8(data: &[u8]) {
     // --- run 2 ---------------------------------------------------------------
     {
         let font_bytes = data.to_vec();
@@ -171,7 +171,7 @@ fn benchmark_vec_u8(data: &[u8]) {
     }
 }
 
-fn benchmark_strings(str: &str, str2: &str) {
+pub fn benchmark_strings(str: &str, str2: &str) {
     // --- run 5 ---------------------------------------------------------------
     {
         let context = Vec::<()>::new();

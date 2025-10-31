@@ -130,7 +130,7 @@ impl ttf_parser::OutlineBuilder for Builder {
     }
 }
 
-unsafe fn convert_slice<T: Sized>(data: &[u8]) -> Option<&[T]> {
+pub unsafe fn convert_slice<T: Sized>(data: &[u8]) -> Option<&[T]> {
     let n = mem::size_of::<T>();
 
     if n == 0 || data.as_ptr().align_offset(n) != 0 || data.len() % n != 0 {
@@ -143,7 +143,7 @@ unsafe fn convert_slice<T: Sized>(data: &[u8]) -> Option<&[T]> {
     ))
 }
 
-fn get_arg_types(data: &[u8]) -> Option<[ArgumentType; 16]> {
+pub fn get_arg_types(data: &[u8]) -> Option<[ArgumentType; 16]> {
     use ArgumentType::*;
 
     if data.len() != 16 {
@@ -173,7 +173,7 @@ pub fn benchmark(data: &BenchmarkData) {
     benchmark_misc();
 }
 
-fn benchmark_template_and_strings(str1: &str, str2: &str, num: u64) {
+pub fn benchmark_template_and_strings(str1: &str, str2: &str, num: u64) {
     // --- run 1 ---------------------------------------------------------------
     {
         println!("run 1");
@@ -272,7 +272,7 @@ fn benchmark_template_and_strings(str1: &str, str2: &str, num: u64) {
     }
 }
 
-fn benchmark_vec_u8(bytes: &[u8]) {
+pub fn benchmark_vec_u8(bytes: &[u8]) {
     // --- run 2 ---------------------------------------------------------------
     {
         println!("run 2");
@@ -378,7 +378,7 @@ fn benchmark_vec_u8(bytes: &[u8]) {
     }
 }
 
-fn benchmark_misc() {
+pub fn benchmark_misc() {
     // --- run 11 --------------------------------------------------------------
     {
         println!("run 11");
