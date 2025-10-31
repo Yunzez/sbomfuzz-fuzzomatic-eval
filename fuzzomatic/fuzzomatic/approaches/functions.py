@@ -30,9 +30,8 @@ def try_functions_approach(
     for f in ordered_functions:
         print(f)
 
-# ! Edit: we changed the max functions to 20
-    max_functions = 20  # try max N functions (increased from 8)
-    max_negative_score_functions = 5  # allow more low-scoring function attempts
+    max_functions = 8  # try max N functions
+    max_negative_score_functions = 2
     negative_score_functions = 0
     for f in ordered_functions[:max_functions]:
         path = f[0]
