@@ -3,8 +3,8 @@ name = "crate_batch_3"
 version = "0.1.0"
 edition = "2021"
 
-# [lib]
-# path = "src/benchmark.rs"
+[lib]
+path = "src/lib.rs"
 
 [dependencies]
 libflate={git="https://github.com/sile/libflate", rev="7e0e56f"}
