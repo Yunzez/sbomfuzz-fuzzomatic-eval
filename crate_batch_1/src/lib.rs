@@ -91,120 +91,15 @@ impl Default for BenchmarkData{
 pub fn main() {
     println!("crate batch 1 benchmark starting");
     let input = vec![1, 2, 3, 4, 5];
-    benchmark(&input);
+    let data = BenchmarkData::default();
+    benchmark(&data);
 }
 
-pub fn benchmark(input: &[u8]) {
-    let seed_bytes = if input.is_empty() {
-        vec![0]
-    } else {
-        input.to_vec()
-    };
+pub fn benchmark(data: &BenchmarkData) {
+    benchmark_string(&data.testString, &data.testString2);
+    benchmark_vec_u8(&data.testVecU8, data.testU64, &data.testKey);
 
-    let cookie_value: String = seed_bytes
-        .iter()
-        .map(|b| char::from(b'a' + (b % 26)))
-        .collect();
-    let session_cookie = format!("session={}", if cookie_value.is_empty() { "bench" } else { &cookie_value });
-
-    let hex_string: String = seed_bytes.iter().map(|b| format!("{:02x}", b)).collect();
-    let hashed_like = if hex_string.is_empty() {
-        "benchmark".to_owned()
-    } else {
-        hex_string
-    };
-
-    let mut test_key = [0u8; 64];
-    for (idx, byte) in test_key.iter_mut().enumerate() {
-        *byte = seed_bytes[idx % seed_bytes.len()];
-    }
-
-    let weight = seed_bytes.iter().fold(0u64, |acc, &b| acc.wrapping_add(b as u64)) + 1;
-
-    let data = BenchmarkData {
-        testString: session_cookie,
-        testString2: hashed_like,
-        testVecU8: seed_bytes,
-        testU64: weight,
-        testKey: test_key,
-    };
-
-    // --- run 1 ---------------------------------------------------------------
-    {
-        let abi_lines = data.testString.lines();
-
-        match JsonAbi::parse(abi_lines) {
-            Ok(parsed_abi) => println!("Parsed ABI: {:?}", parsed_abi),
-            Err(err) => eprintln!("Error parsing ABI: {}", err),
-        }
-    }
-
-    // --- run 3 ---------------------------------------------------------------
-    {
-        match bcrypt::verify(data.testString.clone(), &data.testString2) {
-            Ok(matched) => {
-                if matched {
-                    println!("Password matches the hash");
-                } else {
-                    println!("Password does not match the hash");
-                }
-            }
-            Err(err) => eprintln!("Error verifying password: {}", err),
-        };
-    }
-
-    // --- run 4 ---------------------------------------------------------------
-    {
-        let input = data.testVecU8.as_slice();
-
-        match bincode_6::decode_from_slice::<u32, _>(
-            input,
-            bincode_6::config::Configuration::standard(),
-        ) {
-            Ok((value, _)) => println!("Decoded value from bincode_6: {}", value),
-            Err(err) => eprintln!("Error decoding from bincode_6: {}", err),
-        }
-
-        match bincode_7::decode_from_slice::<u32, _>(
-            input,
-            bincode_7::config::Configuration::standard(),
-        ) {
-            Ok((value, _)) => println!("Decoded value from bincode_7: {}", value),
-            Err(err) => eprintln!("Error decoding from bincode_7: {}", err),
-        }
-    }
-
-    // --- run 5 ---------------------------------------------------------------
-    {
-        let mut cursor1 = Cursor::new(data.testVecU8.as_slice());
-        let mut cursor2 = Cursor::new(data.testVecU8.as_slice());
-        let _ = bson_10::decode_document(&mut cursor1);
-        let _ = bson_11::decode_document(&mut cursor2);
-
-        let mut reader = Cursor::new(data.testVecU8.clone());
-        let _ = bson_12::Document::from_reader(&mut reader);
-    }
-
-    // --- run 6 ---------------------------------------------------------------
-    {
-        print!("chrono_16");
-        let _ = chrono_16::DateTime::parse_from_rfc2822(&data.testString);
-        let _ = chrono_17::DateTime::checked_add_days(
-            chrono_17::Utc::now(),
-            chrono_17::Days::new(data.testU64),
-        );
-    }
-
-    // --- run 7 ---------------------------------------------------------------
-    {
-        let _cookie = cookie::Cookie::parse(data.testString.clone()).expect("failed to parse cookie");
-
-        let key = cookie::Key::from(&data.testKey);
-
-        let mut jar = cookie::CookieJar::new();
-
-        let _signed = jar.signed_mut(&key);
-    }
+    
 
     // --- run 8 ---------------------------------------------------------------
     {
@@ -303,5 +198,100 @@ pub fn benchmark(input: &[u8]) {
             }
             Err(err) => eprintln!("Failed to open FgbReader: {}", err),
         }
+    }
+}
+
+
+pub fn benchmark_string(str: &str, str2: &str) {
+    println!("Benchmarking with input string: {}", str);
+
+     // --- run 1 ---------------------------------------------------------------
+    {
+        let abi_lines = str.lines();
+
+        match JsonAbi::parse(abi_lines) {
+            Ok(parsed_abi) => println!("Parsed ABI: {:?}", parsed_abi),
+            Err(err) => eprintln!("Error parsing ABI: {}", err),
+        }
+    }
+
+
+     // --- run 3 ---------------------------------------------------------------
+    {
+        match bcrypt::verify(str.clone(), str2) {
+            Ok(matched) => {
+                if matched {
+                    println!("Password matches the hash");
+                } else {
+                    println!("Password does not match the hash");
+                }
+            }
+            Err(err) => eprintln!("Error verifying password: {}", err),
+        };
+    }
+
+    // --- run 6_part1 ---------------------------------------------------------------
+    {
+        print!("chrono_16");
+        let _ = chrono_16::DateTime::parse_from_rfc2822(str);
+       
+    }
+
+
+}
+
+
+pub fn benchmark_vec_u8(data: &Vec<u8>, num: u64, key: &[u8; 64]) {
+    println!("Benchmarking with input vec u8: {:?}", data);
+
+    // --- run 4 ---------------------------------------------------------------
+    {
+        let input = data.as_slice();
+
+        match bincode_6::decode_from_slice::<u32, _>(
+            input,
+            bincode_6::config::Configuration::standard(),
+        ) {
+            Ok((value, _)) => println!("Decoded value from bincode_6: {}", value),
+            Err(err) => eprintln!("Error decoding from bincode_6: {}", err),
+        }
+
+        match bincode_7::decode_from_slice::<u32, _>(
+            input,
+            bincode_7::config::Configuration::standard(),
+        ) {
+            Ok((value, _)) => println!("Decoded value from bincode_7: {}", value),
+            Err(err) => eprintln!("Error decoding from bincode_7: {}", err),
+        }
+    }
+
+     // --- run 5 ---------------------------------------------------------------
+    {
+        let mut cursor1 = Cursor::new(data.as_slice());
+        let mut cursor2 = Cursor::new(data.as_slice());
+        let _ = bson_10::decode_document(&mut cursor1);
+        let _ = bson_11::decode_document(&mut cursor2);
+
+        let mut reader = Cursor::new(data.clone());
+        let _ = bson_12::Document::from_reader(&mut reader);
+    }
+
+    // --- run 6_part2 ---------------------------------------------------------------
+    {
+         let _ = chrono_17::DateTime::checked_add_days(
+            chrono_17::Utc::now(),
+            chrono_17::Days::new(num),
+        );
+    }
+
+       // --- run 7 ---------------------------------------------------------------
+    {
+        let _cookie = cookie::Cookie::parse("test".clone()).expect("failed to parse cookie");
+
+        let key = cookie::Key::from(data);
+
+        let mut jar = cookie::CookieJar::new();
+
+        let _signed = jar.signed_mut(&key);
     }
 }

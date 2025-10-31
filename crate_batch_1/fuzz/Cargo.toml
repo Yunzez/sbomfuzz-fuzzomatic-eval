@@ -111,6 +111,20 @@ git = "https://github.com/flatgeobuf/flatgeobuf"
 rev = "25a0456"
 
 [[bin]]
+name = "Arbitrary"
+path = "fuzz_targets/Arbitrary.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "Arbitrary_1"
+path = "fuzz_targets/Arbitrary_1.rs"
+test = false
+doc = false
+
+
+[[bin]]
 name = "from_utf8"
 path = "fuzz_targets/from_utf8.rs"
 test = false
