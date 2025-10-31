@@ -2,10 +2,10 @@
 
 extern crate libfuzzer_sys;
 
-use crate_batch_3;
+use crate_batch_3::run_12;
 use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {
     // fuzzed code goes here
-    crate_batch_3::run_12(data);
+    run_12(data);
 });

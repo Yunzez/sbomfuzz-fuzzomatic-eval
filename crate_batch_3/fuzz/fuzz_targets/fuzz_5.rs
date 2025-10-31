@@ -7,5 +7,5 @@ use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {
     // fuzzed code goes here
-    run_5(data);
+    run_5(data); // Directly call run_5 with the byte slice
 });

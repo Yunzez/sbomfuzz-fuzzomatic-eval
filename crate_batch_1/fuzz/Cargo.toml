@@ -18,13 +18,16 @@ cssparser = "0.34.0"
 cursive = "0.21"
 fatfs = "0.3.6"
 flac = "0.5.0"
-arbitrary = { version = "1", features = ["derive"] }
 
 [workspace]
 members = []
 
 [package.metadata]
 cargo-fuzz = true
+
+[dependencies.arbitrary]
+version = "1"
+features = ["derive"]
 
 [dependencies.crate_batch_1]
 path = ".."
@@ -161,6 +164,69 @@ doc = false
 [[bin]]
 name = "fuzz_11"
 path = "fuzz_targets/fuzz_11.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_12"
+path = "fuzz_targets/fuzz_12.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_13"
+path = "fuzz_targets/fuzz_13.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_5"
+path = "fuzz_targets/from_utf8_5.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_15"
+path = "fuzz_targets/fuzz_15.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_16"
+path = "fuzz_targets/fuzz_16.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_17"
+path = "fuzz_targets/fuzz_17.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "Arbitrary"
+path = "fuzz_targets/Arbitrary.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "Arbitrary_1"
+path = "fuzz_targets/Arbitrary_1.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_6"
+path = "fuzz_targets/from_utf8_6.rs"
 test = false
 doc = false
 

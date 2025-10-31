@@ -15,8 +15,8 @@ pub fn main() {
     let pdf_data = b"%PDF-startxref>";
     // ! comment out this because fuzzomatic stuck on this 
     // run_4(pdf_data); 
-    
-    run_5();
+    let mut lexer = pdf_115::parser::Lexer::new(b"0 1\n0000000000 65535 f\n");
+    run_5(&mut lexer);
     
     let pgp_data = [5, 2, 2, 11, 0, 2, 0, 0];
     run_6(&pgp_data);
@@ -64,11 +64,11 @@ pub fn run_3(data: &str) {
 
 use glob::glob;
 use pdf_115::file::File;
-pub fn run_5() {
-    let mut lexer = pdf_115::parser::Lexer::new(b"0 1\n0000000000 65535 f\n");
+pub fn run_5(lexer: &mut pdf_115::parser::Lexer) {
+    
     let resolve = pdf_115::object::NoResolve;
 
-    match pdf_115::parser::parse_xref_stream_and_trailer(&mut lexer, &resolve) {
+    match pdf_115::parser::parse_xref_stream_and_trailer(lexer, &resolve) {
         Ok((xref_sections, dictionary)) => {
             println!("Parsed xref sections: {:?}", xref_sections);
             println!("Parsed dictionary: {:?}", dictionary);

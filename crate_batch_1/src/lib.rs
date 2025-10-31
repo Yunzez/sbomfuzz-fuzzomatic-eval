@@ -156,7 +156,7 @@ extern crate cranelift_reader;
 use std::str;
 
 pub fn run_8(s: &[u8]) {
-    let s_str = std::str::from_utf8(s).expect("Invalid UTF-8 sequence");
+    let s_str = str::from_utf8(s).unwrap_or("");
     cranelift_reader::parse_test(s_str);
 }
 

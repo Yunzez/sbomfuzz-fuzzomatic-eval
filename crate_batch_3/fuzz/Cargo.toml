@@ -16,13 +16,16 @@ libfuzzer-sys = "0.4"
 mp4ameta = "0.11.0"
 ncurses-rs = "0.0.3"
 base64 = "0.22.1"
-arbitrary = { version = "1", features = ["derive"] }
 
 [workspace]
 members = []
 
 [package.metadata]
 cargo-fuzz = true
+
+[dependencies.arbitrary]
+version = "1"
+features = ["derive"]
 
 [dependencies.crate_batch_3]
 path = ".."
@@ -96,8 +99,8 @@ doc = false
 
 
 [[bin]]
-name = "fuzz_2"
-path = "fuzz_targets/fuzz_2.rs"
+name = "from_utf8"
+path = "fuzz_targets/from_utf8.rs"
 test = false
 doc = false
 
@@ -140,6 +143,48 @@ doc = false
 [[bin]]
 name = "fuzz_12"
 path = "fuzz_targets/fuzz_12.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_13"
+path = "fuzz_targets/fuzz_13.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_14"
+path = "fuzz_targets/fuzz_14.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_1"
+path = "fuzz_targets/from_utf8_1.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_2"
+path = "fuzz_targets/from_utf8_2.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_3"
+path = "fuzz_targets/from_utf8_3.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "fuzz_15"
+path = "fuzz_targets/fuzz_15.rs"
 test = false
 doc = false
 

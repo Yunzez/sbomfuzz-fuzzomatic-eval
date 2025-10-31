@@ -2,12 +2,12 @@
 
 extern crate libfuzzer_sys;
 
-use crate_batch_5::run_3;
+use crate_batch_5::run_1;
 use libfuzzer_sys::fuzz_target;
 
 fuzz_target!(|data: &[u8]| {
     // fuzzed code goes here
     if let Ok(input) = std::str::from_utf8(data) {
-        run_3(input);
+        run_1(input.as_bytes());
     }
 });

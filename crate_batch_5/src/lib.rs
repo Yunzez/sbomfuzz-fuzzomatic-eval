@@ -316,7 +316,7 @@ pub fn run_20(data: &str) {
 
 use raven_uxn::{ Backend, EmptyDevice, Uxn, UxnRam };
 
-fn run_update() {
+pub fn run_update() {
     let mut ram_v = UxnRam::new();
     let mut vm_v = Uxn::new(&mut ram_v, Backend::Interpreter);
 
@@ -329,7 +329,7 @@ fn run_update() {
 }
 
 use unified_diff::diff;
-fn run_update_2() {
+pub fn run_update_2() {
     let test_cases = vec![
         (vec![b'a', b'b', b'c'], vec![b'x', b'y', b'z'], 3),
         (vec![b'1', b'2', b'3'], vec![b'4', b'5', b'6'], 2),

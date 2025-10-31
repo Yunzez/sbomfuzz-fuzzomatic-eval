@@ -46,8 +46,8 @@ pub fn main() {
         235, 82, 144, 78, 84, 70, 83, 32, 32, 32, 32, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 248, 0, 0, 0,
     ];
     run_14(&ntfs_data);
-    
-    run_15();
+
+    run_15("0+2");
     println!("crate batch 3 ending");
 }
 // *** main end
@@ -279,6 +279,9 @@ pub fn run_14(data: &[u8]) {
 }
 
 
-pub fn run_15() {
-    // Disabled - commented out code
+use num_traits::Num;
+fn run_15(input: &str) {
+    // ! failing output
+    num_bigint::BigUint::from_str_radix(input, 10);
+
 }

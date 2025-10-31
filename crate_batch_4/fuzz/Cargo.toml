@@ -132,3 +132,17 @@ path = "fuzz_targets/fuzz_11.rs"
 test = false
 doc = false
 
+
+[[bin]]
+name = "from_utf8_3"
+path = "fuzz_targets/from_utf8_3.rs"
+test = false
+doc = false
+
+
+[[bin]]
+name = "from_utf8_4"
+path = "fuzz_targets/from_utf8_4.rs"
+test = false
+doc = false
+
