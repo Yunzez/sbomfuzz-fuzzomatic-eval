@@ -1,6 +1,7 @@
 use alloy_json_abi::JsonAbi;
-use std::io::{BufReader, Cursor};
+use std::{io::{BufReader, Cursor}};
 use der::Decodable;
+use rand::{seq::SliceRandom, thread_rng};
 // pub struct BenchmarkData {
 //     pub run1_abi_json: String,
 //     pub run3_password: String,
@@ -102,192 +103,225 @@ pub fn benchmark(data: &BenchmarkData) {
 
 
 pub fn benchmark_string(str: &str, str2: &str) {
-    println!("Benchmarking with input string: {}", str);
 
-     // --- run 1 ---------------------------------------------------------------
-    {
-        let abi_lines = str.lines();
+    let mut order = vec![0, 1, 2, 3, 4, 5];
+    let mut rng = thread_rng();
+    order.shuffle(&mut rng);
 
-        match JsonAbi::parse(abi_lines) {
-            Ok(parsed_abi) => println!("Parsed ABI: {:?}", parsed_abi),
-            Err(err) => eprintln!("Error parsing ABI: {}", err),
-        }
-    }
+    for idx in order {
+        match idx {
+            0 => {
+                // --- run 1 ---------------------------------------------------------------
+                {
+                    let abi_lines = str.lines();
 
-
-     // --- run 3 ---------------------------------------------------------------
-    {
-        match bcrypt::verify(str.clone(), str2) {
-            Ok(matched) => {
-                if matched {
-                    println!("Password matches the hash");
-                } else {
-                    println!("Password does not match the hash");
+                    match JsonAbi::parse(abi_lines) {
+                        Ok(parsed_abi) => println!("Parsed ABI: {:?}", parsed_abi),
+                        Err(err) => eprintln!("Error parsing ABI: {}", err),
+                    }
                 }
             }
-            Err(err) => eprintln!("Error verifying password: {}", err),
-        };
-    }
+            1 => {
+                // --- run 3 ---------------------------------------------------------------
+                {
+                    match bcrypt::verify(str.clone(), str2) {
+                        Ok(matched) => {
+                            if matched {
+                                println!("Password matches the hash");
+                            } else {
+                                println!("Password does not match the hash");
+                            }
+                        }
+                        Err(err) => eprintln!("Error verifying password: {}", err),
+                    };
+                }
+            }
+            2 => {
+                // --- run 6_part1 ---------------------------------------------------------------
+                {
+                    print!("chrono_16");
+                    let _ = chrono_16::DateTime::parse_from_rfc2822(str);
+                }
+            }
+            3 => {
+                // --- run 9 ---------------------------------------------------------------
+                {
+                    let _ = csscolorparser::parse(str);
+                }
+            }
+            4 => {
+                // --- run 10 --------------------------------------------------------------
+                {
+                    let mut parser_input = cssparser::ParserInput::new(str2);
+                    let mut parser = cssparser::Parser::new(&mut parser_input);
 
-    // --- run 6_part1 ---------------------------------------------------------------
-    {
-        print!("chrono_16");
-        let _ = chrono_16::DateTime::parse_from_rfc2822(str);
-       
-    }
-
-    // --- run 9 ---------------------------------------------------------------
-    {
-        let _ = csscolorparser::parse(str);
-    }
-
-    // --- run 10 --------------------------------------------------------------
-    {
-        let mut parser_input = cssparser::ParserInput::new(str2);
-        let mut parser = cssparser::Parser::new(&mut parser_input);
-
-        match parser.next_including_whitespace_and_comments() {
-            Ok(token) => println!("Parsed token: {:?}", token),
-            Err(err) => println!("Parsing error: {:?}", err),
+                    match parser.next_including_whitespace_and_comments() {
+                        Ok(token) => println!("Parsed token: {:?}", token),
+                        Err(err) => println!("Parsing error: {:?}", err),
+                    }
+                }
+            }
+            5 => {
+                // --- run 14 --------------------------------------------------------------
+                {
+                    let _ = exmex::parse_with_default_ops::<f64>(str).unwrap();
+                }
+            }
+            _ => unreachable!(),
         }
     }
-
-    // --- run 14 --------------------------------------------------------------
-    {
-        let _ = exmex::parse_with_default_ops::<f64>(str).unwrap();
-    }
-
-
 }
 
 
 pub fn benchmark_vec_u8(data: &Vec<u8>, num: u64, key: &[u8; 64]) {
-    println!("Benchmarking with input vec u8: {:?}", data);
+    let mut order = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let mut rng = thread_rng();
+    order.shuffle(&mut rng);
 
-    // --- run 4 ---------------------------------------------------------------
-    {
-        let input = data.as_slice();
+     for idx in order {
+        match idx {
+            0 => {
+                // --- run 4 ---------------------------------------------------------------
+                {
+                    let input = data.as_slice();
 
-        match bincode_6::decode_from_slice::<u32, _>(
-            input,
-            bincode_6::config::Configuration::standard(),
-        ) {
-            Ok((value, _)) => println!("Decoded value from bincode_6: {}", value),
-            Err(err) => eprintln!("Error decoding from bincode_6: {}", err),
-        }
+                    match bincode_6::decode_from_slice::<u32, _>(
+                        input,
+                        bincode_6::config::Configuration::standard(),
+                    ) {
+                        Ok((value, _)) => println!("Decoded value from bincode_6: {}", value),
+                        Err(err) => eprintln!("Error decoding from bincode_6: {}", err),
+                    }
 
-        match bincode_7::decode_from_slice::<u32, _>(
-            input,
-            bincode_7::config::Configuration::standard(),
-        ) {
-            Ok((value, _)) => println!("Decoded value from bincode_7: {}", value),
-            Err(err) => eprintln!("Error decoding from bincode_7: {}", err),
-        }
-    }
-
-     // --- run 5 ---------------------------------------------------------------
-    {
-        let mut cursor1 = Cursor::new(data.as_slice());
-        let mut cursor2 = Cursor::new(data.as_slice());
-        let _ = bson_10::decode_document(&mut cursor1);
-        let _ = bson_11::decode_document(&mut cursor2);
-
-        let mut reader = Cursor::new(data.clone());
-        let _ = bson_12::Document::from_reader(&mut reader);
-    }
-
-    // --- run 6_part2 ---------------------------------------------------------------
-    {
-         let _ = chrono_17::DateTime::checked_add_days(
-            chrono_17::Utc::now(),
-            chrono_17::Days::new(num),
-        );
-    }
-
-       // --- run 7 ---------------------------------------------------------------
-    {
-        let _cookie = cookie::Cookie::parse("test".clone()).expect("failed to parse cookie");
-
-        let key = cookie::Key::from(key);
-
-        let mut jar = cookie::CookieJar::new();
-
-        let _signed = jar.signed_mut(&key);
-    }
-
-    // --- run 8 ---------------------------------------------------------------
-    {
-        let s_str = match std::str::from_utf8(data.as_slice()) {
-            Ok(value) => value,
-            Err(err) => {
-                eprintln!("Invalid UTF-8 sequence: {}", err);
-                ""
+                    match bincode_7::decode_from_slice::<u32, _>(
+                        input,
+                        bincode_7::config::Configuration::standard(),
+                    ) {
+                        Ok((value, _)) => println!("Decoded value from bincode_7: {}", value),
+                        Err(err) => eprintln!("Error decoding from bincode_7: {}", err),
+                    }
+                }
             }
-        };
-        if !s_str.is_empty() {
-            let _ = cranelift_reader::parse_test(s_str);
-        }
-    }
+            1 => {
+                 // --- run 5 ---------------------------------------------------------------
+                {
+                    let mut cursor1 = Cursor::new(data.as_slice());
+                    let mut cursor2 = Cursor::new(data.as_slice());
+                    let _ = bson_10::decode_document(&mut cursor1);
+                    let _ = bson_11::decode_document(&mut cursor2);
 
-    // --- run 11 --------------------------------------------------------------
-    {
-        let str_result = std::str::from_utf8(data.as_slice());
-        if let Ok(s) = str_result {
-            let mut siv = cursive::default();
+                    let mut reader = Cursor::new(data.clone());
+                    let _ = bson_12::Document::from_reader(&mut reader);
+                }
 
-            siv.add_layer(
-                cursive::views::Dialog::around(cursive::views::TextView::new(s))
-                    .title("Cursive")
-                    .button("Quit", |s| s.quit()),
-            );
-
-            siv.run();
-        } else {
-            println!("not valid utf8");
-        }
-    }
-
-    // --- run 12 --------------------------------------------------------------
-    {
-        match der::Decoder::new(data.as_slice()) {
-            Ok(mut decoder) => match der::asn1::Any::decode(&mut decoder) {
-                Ok(decoded) => println!("Decoded successfully: {:?}", decoded),
-                Err(err) => eprintln!("Error decoding: {}", err),
-            },
-            Err(err) => eprintln!("Failed to create Decoder: {}", err),
-        }
-    }
-
-    // --- run 13 --------------------------------------------------------------
-    {
-        let _ = der_parser::parse_der(data.as_slice());
-    }
-
-    // --- run 15 --------------------------------------------------------------
-    {
-        let storage = Cursor::new(data.clone());
-        let _ = fatfs::FileSystem::new(storage, fatfs::FsOptions::new());
-    }
-
-    // --- run 16 --------------------------------------------------------------
-    {
-        if let Ok(mut stream) = flac::Stream::<flac::ByteStream>::from_buffer(data) {
-            let _ = stream.info();
-            let _ = stream.metadata();
-            let mut iter = stream.iter::<i8>();
-            while iter.next().is_some() {}
-        }
-    }
-
-    // --- run 17 --------------------------------------------------------------
-    {
-        let mut buf_reader = BufReader::new(Cursor::new(data.clone()));
-
-        match flatgeobuf::FgbReader::open(&mut buf_reader) {
-            Ok(mut reader) => {
-                let _ = reader.header();
             }
-            Err(err) => eprintln!("Failed to open FgbReader: {}", err),
+            2 => {
+                // --- run 6_part2 ---------------------------------------------------------------
+                {
+                    let _ = chrono_17::DateTime::checked_add_days(
+                        chrono_17::Utc::now(),
+                        chrono_17::Days::new(num),
+                    );
+                }
+            }
+            3 => {
+                   // --- run 7 ---------------------------------------------------------------
+                {
+                    // let _cookie = cookie::Cookie::parse("test").expect("failed to parse cookie");
+
+                    let key = cookie::Key::from(key);
+
+                    let mut jar = cookie::CookieJar::new();
+
+                    let _signed = jar.signed_mut(&key);
+                }
+            }
+            4 => {
+                // --- run 8 ---------------------------------------------------------------
+                {
+                    let s_str = match std::str::from_utf8(data.as_slice()) {
+                        Ok(value) => value,
+                        Err(err) => {
+                            eprintln!("Invalid UTF-8 sequence: {}", err);
+                            ""
+                        }
+                    };
+                    if !s_str.is_empty() {
+                        let _ = cranelift_reader::parse_test(s_str);
+                    }
+                }
+            }
+            5 => {
+
+                // --- run 12 --------------------------------------------------------------
+                {
+                    match der::Decoder::new(data.as_slice()) {
+                        Ok(mut decoder) => match der::asn1::Any::decode(&mut decoder) {
+                            Ok(decoded) => println!("Decoded successfully: {:?}", decoded),
+                            Err(err) => eprintln!("Error decoding: {}", err),
+                        },
+                        Err(err) => eprintln!("Failed to create Decoder: {}", err),
+                    }
+                }
+            }
+            6 => {
+                  // --- run 13 --------------------------------------------------------------
+                {
+                    let _ = der_parser::parse_der(data.as_slice());
+                }
+            }
+            7 => {
+                // --- run 15 --------------------------------------------------------------
+                {
+                    let storage = Cursor::new(data.clone());
+                    let _ = fatfs::FileSystem::new(storage, fatfs::FsOptions::new());
+                }
+            }
+            8 => {
+                 // --- run 16 --------------------------------------------------------------
+                {
+                    if let Ok(mut stream) = flac::Stream::<flac::ByteStream>::from_buffer(data) {
+                        let _ = stream.info();
+                        let _ = stream.metadata();
+                        let mut iter = stream.iter::<i8>();
+                        while iter.next().is_some() {}
+                    }
+                }
+            }
+            9 => {
+                // --- run 17 --------------------------------------------------------------
+                {
+                    let mut buf_reader = BufReader::new(Cursor::new(data.clone()));
+
+                    match flatgeobuf::FgbReader::open(&mut buf_reader) {
+                        Ok(mut reader) => {
+                            let _ = reader.header();
+                        }
+                        Err(err) => eprintln!("Failed to open FgbReader: {}", err),
+                    }
+                }
+            }
+            10 => {
+                // --- run 11 --------------------------------------------------------------
+                {
+                    let str_result = std::str::from_utf8(data.as_slice());
+                    if let Ok(s) = str_result {
+                        let mut siv = cursive::default();
+
+                        siv.add_layer(
+                            cursive::views::Dialog::around(cursive::views::TextView::new(s))
+                                .title("Cursive")
+                                .button("Quit", |s| s.quit()),
+                        );
+
+                        // siv.run();
+                    } else {
+                        println!("not valid utf8");
+                    }
+                }
+            }
+            _ => unreachable!(),
         }
-    }
+     }
 }
+

@@ -27,3 +27,4 @@ jsonschema = {git = "https://github.com/Stranger6667/jsonschema", rev = "d7b6919
 juniper={git="https://github.com/graphql-rust/juniper"   , rev="52aea4d"}
 just = {package="just", git ="https://github.com/casey/just", rev="8371ada"}
 kalker = "2.1.1"
+rand = "0.8"
