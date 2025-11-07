@@ -1,7 +1,7 @@
+use rand::{seq::SliceRandom, thread_rng};
 use std::io::Read;
 use std::mem;
 use std::os::unix::io::RawFd;
-use std::panic;
 use std::slice;
 
 use tinytemplate::TinyTemplate;
@@ -173,207 +173,223 @@ pub fn benchmark(data: &BenchmarkData) {
     benchmark_misc();
 }
 
+
 pub fn benchmark_template_and_strings(str1: &str, str2: &str, num: u64) {
-    // --- run 1 ---------------------------------------------------------------
-    {
-        println!("run 1");
-        let mut tpl = TinyTemplate::new();
-        let _ = tpl.add_template("template", str1);
-    }
+    let mut order = vec![0, 1, 2, 3, 4, 5];
+    let mut rng = thread_rng();
+    order.shuffle(&mut rng);
 
-    // --- run 4 ---------------------------------------------------------------
-    {
-        println!("run 4");
-        let first_input = format!("key = \"{}\"", str1);
-        let value_first: toml::Value = toml::from_str(&first_input).unwrap();
-        println!("{:?}", value_first);
-        println!("{}", toml::to_string(&value_first).unwrap());
-
-        let second_input = format!("other = \"{}\"", str2);
-        let value_second = toml::from_str::<toml::Value>(&second_input)
-            .unwrap_or_else(|_| toml::Value::String(str2.to_owned()));
-        println!("{:?}", value_second);
-        match toml::to_string(&value_second) {
-            Ok(serialized) => println!("{}", serialized),
-            Err(e) => eprintln!("Error serializing TOML: {}", e),
-        }
-
-        let bracket_count = ((num as usize) % 8).max(1);
-        let brackets = "[".repeat(bracket_count);
-        let input_string = format!("x={}", &brackets);
-        let _: Result<toml::Value, _> = toml::from_str(&input_string);
-    }
-
-    // --- run 6 ---------------------------------------------------------------
-    {
-        println!("run 6");
-        let byte_unit_input = if str1.contains('B') {
-            str1.to_owned()
-        } else {
-            format!("{} B", num.max(1))
-        };
-        match byte_unit_input.parse::<ByteUnit>() {
-            Ok(byte_unit) => println!("Parsed byte unit: {:?}", byte_unit),
-            Err(e) => eprintln!("Error parsing byte unit: {:?}", e),
-        }
-    }
-
-    // --- run 7 ---------------------------------------------------------------
-    {
-        println!("run 7");
-        let grapheme_text = if str1.is_empty() {
-            str2.to_owned()
-        } else {
-            str1.to_owned()
-        };
-        let forward = UnicodeSegmentation::graphemes(grapheme_text.as_str(), true).collect::<Vec<_>>();
-        let forward_reversed = forward.clone().into_iter().rev().collect::<Vec<_>>();
-        let reverse = UnicodeSegmentation::graphemes(grapheme_text.as_str(), true)
-            .rev()
-            .collect::<Vec<_>>();
-        assert_eq!(forward_reversed, reverse);
-
-        let word_bounds_text = format!("{} {}", str1, str2);
-        let forward = word_bounds_text
-            .split_word_bounds()
-            .collect::<Vec<_>>();
-        let forward_reversed = forward.clone().into_iter().rev().collect::<Vec<_>>();
-        let reverse = word_bounds_text.split_word_bounds().rev().collect::<Vec<_>>();
-        assert_eq!(forward_reversed, reverse);
-    }
-
-    // --- run 9 ---------------------------------------------------------------
-    {
-        let base_url = format!("http://{}", str1.replace(' ', ""));
-        let _ = Url::parse(&base_url);
-
-        let edge_candidate = if str2.contains("://") {
-            str2.to_owned()
-        } else {
-            "p://:/".to_string()
-        };
-        match Url::parse(&edge_candidate) {
-            Ok(u) => {
-                let s = u.as_str();
-                println!("Parsed edge URL: {}", s);
-                match Url::parse("p://:/") {
-                    Ok(parsed_url) => println!("Parsed URL: {}", parsed_url),
-                    Err(e) => eprintln!("Error parsing URL: {:?}", e),
+    for idx in order {
+        match idx {
+            0 => {
+                // --- run 1 ---------------------------------------------------------------
+                {
+                    println!("run 1");
+                    let mut tpl = TinyTemplate::new();
+                    let _ = tpl.add_template("template", str1);
                 }
             }
-            Err(e) => eprintln!("Error parsing URL: {:?}", e),
-        }
-    }
+            1 => {
+                // --- run 4 ---------------------------------------------------------------
+                {
+                    println!("run 4");
+                    let first_input = format!("key = \"{}\"", str1);
+                    let value_first: toml::Value = toml::from_str(&first_input).unwrap();
+                    println!("{:?}", value_first);
+                    println!("{}", toml::to_string(&value_first).unwrap());
 
-    // --- run 10 --------------------------------------------------------------
-    {
-        println!("run 10");
-        let _ = panic::catch_unwind(|| Uuid::parse_str(str1).unwrap());
+                    let second_input = format!("other = \"{}\"", str2);
+                    let value_second = toml::from_str::<toml::Value>(&second_input)
+                        .unwrap_or_else(|_| toml::Value::String(str2.to_owned()));
+                    println!("{:?}", value_second);
+                    match toml::to_string(&value_second) {
+                        Ok(serialized) => println!("{}", serialized),
+                        Err(e) => eprintln!("Error serializing TOML: {}", e),
+                    }
+
+                    let bracket_count = ((num as usize) % 8).max(1);
+                    let brackets = "[".repeat(bracket_count);
+                    let input_string = format!("x={}", &brackets);
+                    let _: Result<toml::Value, _> = toml::from_str(&input_string);
+                }
+            }
+            2 => {
+                // --- run 6 ---------------------------------------------------------------
+                {
+                    println!("run 6");
+                    let byte_unit_input = if str1.contains('B') {
+                        str1.to_owned()
+                    } else {
+                        format!("{} B", num.max(1))
+                    };
+                    let _byte_unit = byte_unit_input.parse::<ByteUnit>();   
+                }
+            }
+            3 => {
+                // --- run 7 ---------------------------------------------------------------
+                {
+                    println!("run 7");
+                    let grapheme_text = if str1.is_empty() {
+                        str2.to_owned()
+                    } else {
+                        str1.to_owned()
+                    };
+                    let forward =
+                        UnicodeSegmentation::graphemes(grapheme_text.as_str(), true).collect::<Vec<_>>();
+                    let forward_reversed = forward.clone().into_iter().rev().collect::<Vec<_>>();
+                    let reverse = UnicodeSegmentation::graphemes(grapheme_text.as_str(), true)
+                        .rev()
+                        .collect::<Vec<_>>();
+                    assert_eq!(forward_reversed, reverse);
+
+                    let word_bounds_text = format!("{} {}", str1, str2);
+                    let forward = word_bounds_text.split_word_bounds().collect::<Vec<_>>();
+                    let forward_reversed = forward.clone().into_iter().rev().collect::<Vec<_>>();
+                    let reverse = word_bounds_text.split_word_bounds().rev().collect::<Vec<_>>();
+                    assert_eq!(forward_reversed, reverse);
+                }
+            }
+            4 => {
+                // --- run 9 ---------------------------------------------------------------
+                {
+                    let base_url = format!("http://{}", str1.replace(' ', ""));
+                    let _ = Url::parse(&base_url);
+
+                    let edge_candidate = if str2.contains("://") {
+                        str2.to_owned()
+                    } else {
+                        "p://:/".to_string()
+                    };
+                    match Url::parse(&edge_candidate) {
+                        Ok(u) => {
+                            let s = u.as_str();
+                            println!("Parsed edge URL: {}", s);
+                            let _ = Url::parse("p://:/");
+                        }
+                        Err(e) => eprintln!("Error parsing URL: {:?}", e),
+                    }
+                }
+            }
+            5 => {
+                // --- run 10 --------------------------------------------------------------
+                {
+                    println!("run 10");
+                    let _ = Uuid::parse_str(str1).unwrap();
+                }
+            }
+            _ => unreachable!(),
+        }
     }
 }
 
 pub fn benchmark_vec_u8(bytes: &[u8]) {
-    // --- run 2 ---------------------------------------------------------------
-    {
-        println!("run 2");
-        if let Ok(line) = std::str::from_utf8(bytes) {
-            let _: Result<Task, _> = line.parse();
-        }
-    }
+    let mut order = vec![0, 1, 2, 3, 4, 5, 6, 7];
+    let mut rng = thread_rng();
+    order.shuffle(&mut rng);
 
-    // --- run 3 ---------------------------------------------------------------
-    {
-        println!("run 3");
-        let language = LanguageType::Vue;
-        let config = Config {
-            treat_doc_strings_as_comments: Some(true),
-            ..Config::default()
-        };
-
-        let bytes_owned = bytes.to_vec();
-        let result =
-            panic::catch_unwind(|| language.parse_from_slice(bytes_owned, &config));
-
-        match result {
-            Ok(_) => println!("Parsed successfully"),
-            Err(_) => eprintln!("❌ Caught panic in `parse_from_slice`!"),
-        }
-    }
-
-    // --- run 5 ---------------------------------------------------------------
-    {
-        println!("run 5");
-        match ttf_parser::Face::from_slice(bytes, 0) {
-            Ok(face) => {
-                let _ = face.outline_glyph(ttf_parser::GlyphId(0), &mut Builder);
+    for idx in order {
+        match idx {
+            0 => {
+                // --- run 2 ---------------------------------------------------------------
+                {
+                    println!("run 2");
+                    if let Ok(line) = std::str::from_utf8(bytes) {
+                        let _: Result<Task, _> = line.parse();
+                    }
+                }
             }
-            Err(e) => eprintln!("Error parsing font: {:?}", e),
-        }
-    }
+            1 => {
+                // --- run 3 ---------------------------------------------------------------
+                {
+                    println!("run 3");
+                    let language = LanguageType::Vue;
+                    let config = Config {
+                        treat_doc_strings_as_comments: Some(true),
+                        ..Config::default()
+                    };
 
-    // --- run 12 --------------------------------------------------------------
-    {
-        println!("run 12");
-        let mut subtitle_bytes = bytes.to_vec();
-        subtitle_bytes.push(0);
-        for _ in vobsub::subtitles(&subtitle_bytes) {
-            // iterate
-        }
-    }
-
-    // --- run 13 --------------------------------------------------------------
-    {
-        println!("run 13");
-        let mut message_data = bytes.to_vec();
-        if message_data.len() < 48 {
-            message_data.resize(48, 0);
-        }
-        let slice = message_data.as_slice();
-        let fds = unsafe { convert_slice::<RawFd>(&slice[..16]) };
-        let args = get_arg_types(&slice[16..32]);
-        let rest = unsafe { convert_slice::<u32>(&slice[32..]) };
-
-        if let (Some(fds), Some(args), Some(payload)) = (fds, args, rest) {
-            let result = panic::catch_unwind(|| Message::from_raw(payload, &args, fds));
-            match result {
-                Ok(_) => println!("✅ Message parsing succeeded."),
-                Err(_) => eprintln!("❌ Caught panic in `Message::from_raw`"),
+                    let bytes_owned = bytes.to_vec();
+                    let _ = language.parse_from_slice(bytes_owned, &config);
+                }
             }
-        } else {
-            eprintln!("❌ Invalid input detected, skipping Message::from_raw");
-        }
-    }
+            2 => {
+                // --- run 5 ---------------------------------------------------------------
+                {
+                    println!("run 5");
+                    match ttf_parser::Face::from_slice(bytes, 0) {
+                        Ok(face) => {
+                            let _ = face.outline_glyph(ttf_parser::GlyphId(0), &mut Builder);
+                        }
+                        Err(e) => eprintln!("Error parsing font: {:?}", e),
+                    }
+                }
+            }
+            3 => {
+                // --- run 12 --------------------------------------------------------------
+                {
+                    println!("run 12");
+                    let mut subtitle_bytes = bytes.to_vec();
+                    subtitle_bytes.push(0);
+                    for _ in vobsub::subtitles(&subtitle_bytes) {
+                        // iterate
+                    }
+                }
+            }
+            4 => {
+                // --- run 13 --------------------------------------------------------------
+                {
+                    println!("run 13");
+                    let mut message_data = bytes.to_vec();
+                    if message_data.len() < 48 {
+                        message_data.resize(48, 0);
+                    }
+                    let slice = message_data.as_slice();
+                    let fds = unsafe { convert_slice::<RawFd>(&slice[..16]) };
+                    let args = get_arg_types(&slice[16..32]);
+                    let rest = unsafe { convert_slice::<u32>(&slice[32..]) };
 
-    // --- run 14 --------------------------------------------------------------
-    {
-        println!("run 14");
-        let mut cursor = std::io::Cursor::new(bytes.to_vec());
-        let _ = ws::Frame::parse(&mut cursor);
-    }
+                    if let (Some(fds), Some(args), Some(payload)) = (fds, args, rest) {
+                        let _message = Message::from_raw(payload, &args, fds);
+                    } 
+                }
+            }
+            5 => {
+                // --- run 14 --------------------------------------------------------------
+                {
+                    println!("run 14");
+                    let mut cursor = std::io::Cursor::new(bytes.to_vec());
+                    let _ = ws::Frame::parse(&mut cursor);
+                }
+            }
+            6 => {
+                // --- run 15 --------------------------------------------------------------
+                {
+                    let decoder = yaxpeax_x86::amd64::InstDecoder::default();
+                    let _ = decoder.decode_slice(bytes);
+                }
+            }
+            7 => {
+                // --- run 16 --------------------------------------------------------------
+                {
+                    println!("running run 16");
+                    let mut zip_bytes = bytes.to_vec();
+                    if zip_bytes.len() < 4 {
+                        zip_bytes.extend_from_slice(&[0u8; 4]);
+                    }
+                    let reader = std::io::Cursor::new(zip_bytes);
+                    let mut archive = if let Ok(x) = zip::ZipArchive::new(reader) {
+                        x
+                    } else {
+                        return;
+                    };
 
-    // --- run 15 --------------------------------------------------------------
-    {
-        let decoder = yaxpeax_x86::amd64::InstDecoder::default();
-        drop(decoder.decode_slice(bytes));
-    }
-
-    // --- run 16 --------------------------------------------------------------
-    {
-        println!("running run 16");
-        let mut zip_bytes = bytes.to_vec();
-        if zip_bytes.len() < 4 {
-            zip_bytes.extend_from_slice(&[0u8; 4]);
-        }
-        let reader = std::io::Cursor::new(zip_bytes);
-        let mut archive = if let Ok(x) = zip::ZipArchive::new(reader) {
-            x
-        } else {
-            return;
-        };
-
-        for i in 0..archive.len() {
-            let file = archive.by_index(i).unwrap();
-            let _size = file.bytes().count();
+                    for i in 0..archive.len() {
+                        let file = archive.by_index(i).unwrap();
+                        let _size = file.bytes().count();
+                    }
+                }
+            }
+            _ => unreachable!(),
         }
     }
 }

@@ -37,3 +37,5 @@ exmex = {git="https://github.com/bertiqwerty/exmex", rev="3c29e56"}
 fatfs = "0.3.6"
 flac = "0.5.0"
 flatgeobuf = {git="https://github.com/flatgeobuf/flatgeobuf", rev="25a0456"} 
+
+rand = "0.8"

@@ -2,6 +2,10 @@
 """
 Run all fuzz targets in a tmux session with each target in its own window.
 
+Each window runs `cargo fuzz` with libFuzzer configured to continue after
+crashes, timeouts, and OOMs for the requested duration (defaults to 24 hours).
+Optional multi-process fuzzing is enabled via libFuzzer's `-fork` flag.
+
 Usage:
     python3 run_all_fuzz.py <crate_directory> [--session-name NAME] [--time SECONDS]
     
@@ -60,7 +64,7 @@ def session_exists(session_name):
         return False
 
 
-def create_tmux_session(session_name, crate_dir, targets, max_time):
+def create_tmux_session(session_name, crate_dir, targets, max_time, fork_jobs):
     """Create a tmux session with each fuzz target in its own window"""
     
     if not targets:
@@ -70,6 +74,10 @@ def create_tmux_session(session_name, crate_dir, targets, max_time):
     print(f"Creating tmux session '{session_name}' with {len(targets)} fuzz targets...")
     print(f"Crate directory: {crate_dir}")
     print(f"Max time per target: {max_time} seconds ({max_time/3600:.1f} hours)")
+    base_flag_msg = "LibFuzzer flags: -ignore_crashes=1 -ignore_timeouts=1 -ignore_ooms=1"
+    if fork_jobs and fork_jobs > 0:
+        base_flag_msg += f" -fork={fork_jobs}"
+    print(base_flag_msg)
     print("-" * 70)
     
     # Kill existing session if it exists
@@ -81,28 +89,50 @@ def create_tmux_session(session_name, crate_dir, targets, max_time):
     
     # Create new session with first target in first window
     first_target = targets[0]
-    cmd = f"cd {crate_dir} && cargo fuzz run {first_target} -- -max_total_time={max_time}"
+    libfuzzer_flags = [
+        f"-max_total_time={max_time}",
+        "-ignore_crashes=1",
+        "-ignore_timeouts=1",
+        "-ignore_ooms=1",
+    ]
+    if fork_jobs and fork_jobs > 0:
+        libfuzzer_flags.append(f"-fork={fork_jobs}")
+    joined_flags = " ".join(libfuzzer_flags)
+
+    cargo_cmd = os.environ.get("FUZZ_CARGO_COMMAND", "cargo +nightly fuzz run")
+    cmd = f"cd {crate_dir} && {cargo_cmd} {first_target} -- {joined_flags}"
     
     print(f"[1/{len(targets)}] Window 0: {first_target}")
     
-    subprocess.run([
-        'tmux', 'new-session', '-d', '-s', session_name,
-        '-n', first_target,  # Window name is the target name
-        cmd
-    ])
+    try:
+        subprocess.run([
+            'tmux', 'new-session', '-d', '-s', session_name,
+            '-n', first_target,  # Window name is the target name
+            'bash', '-lc', cmd
+        ], check=True)
+    except subprocess.CalledProcessError as exc:
+        print(f"Failed to create tmux session for target '{first_target}': {exc}")
+        print("Command:", cmd)
+        sys.exit(1)
     
     # Add remaining targets in new windows
     for i, target in enumerate(targets[1:], start=2):
         print(f"[{i}/{len(targets)}] Window {i-1}: {target}")
-        
-        cmd = f"cd {crate_dir} && cargo fuzz run {target} -- -max_total_time={max_time}"
-        
+        cmd = f"cd {crate_dir} && {cargo_cmd} {target} -- {joined_flags}"
+
         # Create a new window for each target
-        subprocess.run([
-            'tmux', 'new-window', '-t', session_name,
-            '-n', target,  # Window name
-            cmd
-        ])
+        try:
+            subprocess.run([
+                'tmux', 'new-window', '-t', session_name,
+                '-n', target,  # Window name
+                'bash', '-lc', cmd
+            ], check=True)
+        except subprocess.CalledProcessError as exc:
+            print(f"Failed to create tmux window for target '{target}': {exc}")
+            print("Command:", cmd)
+            print("Cleaning up session...")
+            subprocess.run(['tmux', 'kill-session', '-t', session_name], capture_output=True)
+            sys.exit(1)
     
     # Select the first window
     subprocess.run([
@@ -142,6 +172,9 @@ Examples:
   # Custom session name and 60 second timeout
   python3 run_all_fuzz.py crate_batch_1 --session-name my_fuzz --time 60
   
+    # Run with four forked libFuzzer workers per target
+    python3 run_all_fuzz.py crate_batch_1 --forks 4
+  
   # Attach to running session
   tmux attach -t fuzz_session
         """
@@ -160,6 +193,12 @@ Examples:
         type=int,
         default=86400,
         help="Max time in seconds for each fuzzer (default: 86400 = 24 hours)"
+    )
+    parser.add_argument(
+        '--forks',
+        type=int,
+        default=0,
+        help="Number of libFuzzer forked workers per target (0 disables -fork)"
     )
     parser.add_argument(
         '--attach', '-a',
@@ -202,7 +241,8 @@ Examples:
         args.session_name,
         crate_dir,
         targets,
-        args.time
+        args.time,
+        args.forks
     )
     
     # Attach if requested

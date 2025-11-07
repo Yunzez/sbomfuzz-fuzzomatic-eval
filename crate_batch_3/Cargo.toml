@@ -46,3 +46,4 @@ ntfs={git = "https://github.com/ColinFinck/ntfs", rev = "0783cbd"}
 # num-traits={git = "https://github.com/rust-num/num", rev = "d273495"}
 # num-bigint={git = "https://github.com/rust-num/num", rev = "d273495", default-features = false, features = []}
 base64 = "0.22.1"
+rand = "0.8"

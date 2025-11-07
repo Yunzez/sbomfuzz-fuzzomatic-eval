@@ -569,6 +569,7 @@ dependencies = [
  "minidump",
  "minidump-processor",
  "minidump-unwind",
+ "rand 0.8.5",
  "rasn",
  "raven-uxn",
  "ron",

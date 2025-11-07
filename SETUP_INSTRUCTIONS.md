@@ -89,6 +89,11 @@ python3 extract_harnesses.py crate_batch_1 --backup
 # Run all targets for 24 hours (default) in a tmux session
 python3 run_all_fuzz.py crate_batch_1
 
+> **Note:** The script runs `cargo +nightly fuzz run` under the hood. Ensure the nightly toolchain is installed (`rustup toolchain install nightly`).
+
+# Run with 4 forked workers per target to keep fuzzing across crashes
+python3 run_all_fuzz.py crate_batch_1 --forks 4
+
 # Custom session name and shorter time
 python3 run_all_fuzz.py crate_batch_1 --session-name my_fuzz --time 3600
 

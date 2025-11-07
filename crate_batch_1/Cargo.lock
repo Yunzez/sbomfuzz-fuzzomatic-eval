@@ -980,6 +980,7 @@ dependencies = [
  "fatfs",
  "flac",
  "flatgeobuf",
+ "rand 0.8.5",
 ]
 
 [[package]]

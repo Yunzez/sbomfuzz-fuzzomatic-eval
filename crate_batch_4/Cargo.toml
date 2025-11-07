@@ -30,3 +30,4 @@ pulldown-cmark-133 = {package = "pulldown-cmark", git = "https://github.com/pull
 
 
 quick-xml = {git="https://github.com/tafia/quick-xml", rev = "0fd7fbb"}
+rand = "0.8"

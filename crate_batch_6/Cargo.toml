@@ -39,3 +39,4 @@ ws ={ git = "https://github.com/housleyjk/ws-rs", rev = "ec5fda6"}
 yaxpeax-x86 = {git = "https://github.com/iximeow/yaxpeax-x86", rev = "cd98728"}
 
 zip = {git = "https://github.com/mvdnes/zip-rs", rev = "5c12e51"}
+rand = "0.8"

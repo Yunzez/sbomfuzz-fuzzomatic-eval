@@ -10,6 +10,7 @@ use pulldown_cmark_128;
 use pulldown_cmark_131;
 use pulldown_cmark_133;
 use quick_xml::reader::Reader;
+use rand::{seq::SliceRandom, thread_rng};
 use std::ffi::CString;
 use std::io::{self, Cursor};
 use std::str;
@@ -132,143 +133,173 @@ fn benchmark_misc() {
 }
 
 pub fn benchmark_vec_u8(bytes: &[u8], key: &[u8]) {
-    // --- run 2 ---------------------------------------------------------------
-    {
-        let _ = parse_block(bytes);
-    }
+    let mut order = vec![0, 1, 2, 3, 4, 5];
+    let mut rng = thread_rng();
+    order.shuffle(&mut rng);
 
-    // --- run 4 ---------------------------------------------------------------
-    {
-        println!("running pdf_112");
-        Pdf112File::from_data(bytes);
-    }
-
-    // --- run 5 ---------------------------------------------------------------
-    {
-        println!("running pdf_115");
-        let mut lexer = pdf_115::parser::Lexer::new(bytes);
-        let resolve = pdf_115::object::NoResolve;
-
-        match pdf_115::parser::parse_xref_stream_and_trailer(&mut lexer, &resolve) {
-            Ok((xref_sections, dictionary)) => {
-                println!("Parsed xref sections: {:?}", xref_sections);
-                println!("Parsed dictionary: {:?}", dictionary);
+    for idx in order {
+        match idx {
+            0 => {
+                // --- run 2 ---------------------------------------------------------------
+                {
+                    let _ = parse_block(bytes);
+                }
             }
-            Err(e) => println!("Failed to parse xref stream and trailer: {:?}", e),
-        }
+            1 => {
+                // --- run 4 ---------------------------------------------------------------
+                {
+                    println!("running pdf_112");
+                    Pdf112File::from_data(bytes);
+                }
+            }
+            2 => {
+                // --- run 5 ---------------------------------------------------------------
+                {
+                    println!("running pdf_115");
+                    let mut lexer = pdf_115::parser::Lexer::new(bytes);
+                    let resolve = pdf_115::object::NoResolve;
 
-        for entry in glob("invalid/*.pdf").expect("Failed to read glob pattern") {
-            match entry {
-                Ok(path) => {
-                    let path_str = match path.to_str() {
-                        Some(p) => p,
-                        None => continue,
-                    };
-                    println!("\n\n == Now testing `{}` ==\n", path_str);
-
-                    match Pdf115File::<Vec<u8>>::open(path_str) {
-                        Ok(file) => {
-                            for i in 0..file.num_pages() {
-                                let _ = file.get_page(i);
-                            }
+                    match pdf_115::parser::parse_xref_stream_and_trailer(&mut lexer, &resolve) {
+                        Ok((xref_sections, dictionary)) => {
+                            println!("Parsed xref sections: {:?}", xref_sections);
+                            println!("Parsed dictionary: {:?}", dictionary);
                         }
-                        Err(_) => continue,
+                        Err(e) => println!("Failed to parse xref stream and trailer: {:?}", e),
+                    }
+
+                    for entry in glob("invalid/*.pdf").expect("Failed to read glob pattern") {
+                        match entry {
+                            Ok(path) => {
+                                let path_str = match path.to_str() {
+                                    Some(p) => p,
+                                    None => continue,
+                                };
+                                println!("\n\n == Now testing `{}` ==\n", path_str);
+
+                                match Pdf115File::<Vec<u8>>::open(path_str) {
+                                    Ok(file) => {
+                                        for i in 0..file.num_pages() {
+                                            let _ = file.get_page(i);
+                                        }
+                                    }
+                                    Err(_) => continue,
+                                }
+                            }
+                            Err(e) => panic!("error when reading glob patterns: {:?}", e),
+                        }
                     }
                 }
-                Err(e) => panic!("error when reading glob patterns: {:?}", e),
             }
+            3 => {
+                // --- run 6 ---------------------------------------------------------------
+                {
+                    println!("running pgp");
+                    let mut signature = [0u8; 8];
+                    let copy_len = key.len().min(signature.len());
+                    if copy_len > 0 {
+                        signature[..copy_len].copy_from_slice(&key[..copy_len]);
+                    }
+                    let _ = pgp::Signature::from_slice(pgp::types::Version::New, &signature);
+                }
+            }
+            4 => {
+                // --- run 7 ---------------------------------------------------------------
+                {
+                    println!("running plist");
+                    let cursor = Cursor::new(bytes.to_vec());
+                    let _ = plist::Value::from_reader(cursor);
+                }
+            }
+            5 => {
+                // --- run 8 ---------------------------------------------------------------
+                {
+                    let _ = decode_png(bytes);
+                }
+            }
+            _ => unreachable!(),
         }
-    }
-
-    // --- run 6 ---------------------------------------------------------------
-    {
-        println!("running pgp");
-        let mut signature = [0u8; 8];
-        let copy_len = key.len().min(signature.len());
-        if copy_len > 0 {
-            signature[..copy_len].copy_from_slice(&key[..copy_len]);
-        }
-        let _ = pgp::Signature::from_slice(pgp::types::Version::New, &signature);
-    }
-
-    // --- run 7 ---------------------------------------------------------------
-    {
-        println!("running plist");
-        let cursor = Cursor::new(bytes.to_vec());
-        let _ = plist::Value::from_reader(cursor);
-    }
-
-    // --- run 8 ---------------------------------------------------------------
-    {
-        let _ = decode_png(bytes);
     }
 }
 
 pub fn benchmark_strings(str: &str, str2: &str, bytes: &[u8]) {
-    // --- run 3 ---------------------------------------------------------------
-    {
-        let digits: String = str.chars().filter(|c| c.is_ascii_digit()).collect();
-        let input = if digits.is_empty() {
-            String::from("1234567890")
-        } else {
-            digits
-        };
-        let _ = phonenumber::parse(None, input);
-    }
+    let mut order = vec![0, 1, 2, 3];
+    let mut rng = thread_rng();
+    order.shuffle(&mut rng);
 
-    // --- run 9 ---------------------------------------------------------------
-    {
-        let table_data = [
-            TableRowData {
-                cells: vec![TableCellData {
-                    text: str.to_owned(),
-                    alignment: 0u8,
-                }],
-            },
-            TableRowData {
-                cells: vec![TableCellData {
-                    text: str2.to_owned(),
-                    alignment: 1u8,
-                }],
-            },
-        ];
-        run_table(&table_data);
-    }
-
-    // --- run 10 --------------------------------------------------------------
-    {
-        let text = str.to_owned();
-        let _ = pulldown_cmark_128::Parser::new(&text);
-
-        let mut output = String::new();
-        let parser = pulldown_cmark_131::Parser::new(&text);
-        pulldown_cmark_131::html::push_html(&mut output, parser);
-
-        let mut opts = pulldown_cmark_133::Options::empty();
-        opts.insert(pulldown_cmark_133::Options::ENABLE_HEADING_ATTRIBUTES);
-
-        for _ in pulldown_cmark_133::Parser::new_ext(&text, opts) {}
-
-        let _ = str2.to_owned();
-    }
-
-    // --- run 11 --------------------------------------------------------------
-    {
-        let cursor = Cursor::new(bytes.to_vec());
-        let mut reader = Reader::from_reader(cursor);
-        reader.trim_text(true);
-        let mut buf = Vec::new();
-        loop {
-            match reader.read_event(&mut buf) {
-                Ok(quick_xml::events::Event::Eof) | Err(_) => break,
-                _ => buf.clear(),
+    for idx in order {
+        match idx {
+            0 => {
+                // --- run 3 ---------------------------------------------------------------
+                {
+                    let digits: String = str.chars().filter(|c| c.is_ascii_digit()).collect();
+                    let input = if digits.is_empty() {
+                        String::from("1234567890")
+                    } else {
+                        digits
+                    };
+                    let _ = phonenumber::parse(None, input);
+                }
             }
-        }
+            1 => {
+                // --- run 9 ---------------------------------------------------------------
+                {
+                    let table_data = [
+                        TableRowData {
+                            cells: vec![TableCellData {
+                                text: str.to_owned(),
+                                alignment: 0u8,
+                            }],
+                        },
+                        TableRowData {
+                            cells: vec![TableCellData {
+                                text: str2.to_owned(),
+                                alignment: 1u8,
+                            }],
+                        },
+                    ];
+                    run_table(&table_data);
+                }
+            }
+            2 => {
+                // --- run 10 --------------------------------------------------------------
+                {
+                    let text = str.to_owned();
+                    let _ = pulldown_cmark_128::Parser::new(&text);
 
-        let mut reader = Reader::from_str(str);
-        let mut buf = Vec::new();
-        let _ = reader.read_event(&mut buf);
-        let _ = reader.read_event(&mut buf);
+                    let mut output = String::new();
+                    let parser = pulldown_cmark_131::Parser::new(&text);
+                    pulldown_cmark_131::html::push_html(&mut output, parser);
+
+                    let mut opts = pulldown_cmark_133::Options::empty();
+                    opts.insert(pulldown_cmark_133::Options::ENABLE_HEADING_ATTRIBUTES);
+
+                    for _ in pulldown_cmark_133::Parser::new_ext(&text, opts) {}
+
+                    let _ = str2.to_owned();
+                }
+            }
+            3 => {
+                // --- run 11 --------------------------------------------------------------
+                {
+                    let cursor = Cursor::new(bytes.to_vec());
+                    let mut reader = Reader::from_reader(cursor);
+                    reader.trim_text(true);
+                    let mut buf = Vec::new();
+                    loop {
+                        match reader.read_event(&mut buf) {
+                            Ok(quick_xml::events::Event::Eof) | Err(_) => break,
+                            _ => buf.clear(),
+                        }
+                    }
+
+                    let mut reader = Reader::from_str(str);
+                    let mut buf = Vec::new();
+                    let _ = reader.read_event(&mut buf);
+                    let _ = reader.read_event(&mut buf);
+                }
+            }
+            _ => unreachable!(),
+        }
     }
 }
 

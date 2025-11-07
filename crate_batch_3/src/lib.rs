@@ -16,6 +16,7 @@ use mp4ameta::Tag;
 use naga::front::wgsl::Parser;
 use npy::NpyData;
 use ntfs::Ntfs;
+use rand::{seq::SliceRandom, thread_rng};
 use rust_minidump_85::Minidump as Minidump85;
 use rust_minidump_86::{
     Minidump,
@@ -116,92 +117,113 @@ pub fn benchmark(data: &BenchmarkData) {
 }
 
 pub fn benchmark_vec_u8(bytes: &[u8]) {
-    // --- run 1 ---------------------------------------------------------------
-    {
-        let mut decoder = DeflateDecoder::new(Cursor::new(bytes));
-        let _ = io::copy(&mut decoder, &mut io::sink());
-    }
+    let mut order = vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let mut rng = thread_rng();
+    order.shuffle(&mut rng);
 
-    // --- run 2 ---------------------------------------------------------------
-    {
-        let _ = Document::load_mem(bytes);
-    }
-
-    // --- run 3 ---------------------------------------------------------------
-    {
-        let input = Cursor::new(bytes.to_vec());
-        let mut output = Vec::new();
-
-        if let Ok(reader) = LZ4FrameReader::new(input) {
-            let _ = reader.into_read().read_to_end(&mut output);
-        }
-    }
-
-    // --- run 4 ---------------------------------------------------------------
-    {
-        let compressed = compress_prepend_size(bytes);
-        let _ = decompress_size_prepended(&compressed);
-    }
-
-    // --- run 8 ---------------------------------------------------------------
-    {
-        // Original implementation returns immediately; nothing to execute here.
-    }
-
-    // --- run 9 ---------------------------------------------------------------
-    {
-        let mut cursor = Cursor::new(bytes.to_vec());
-        let _ = Tag::read_from(&mut cursor);
-    }
-
-    // --- run 10 --------------------------------------------------------------
-    {
-        let data_str = std::str::from_utf8(bytes).unwrap_or("");
-        let _ = Parser::new().parse(data_str);
-    }
-
-    // --- run 12 --------------------------------------------------------------
-    {
-        named!(parser01<&[u8], ()>,
-            do_parse!(
-                hdr: take!(1) >>
-                data: take!(1023) >>
-                ( () )
-            )
-        );
-
-        let mut buffer = bytes.to_vec();
-        if buffer.len() < 1024 {
-            buffer.resize(1024, 0);
-        }
-        let _ = parser01(&buffer);
-    }
-
-    // --- run 13 --------------------------------------------------------------
-    {
-        let _ = npy::from_bytes::<Array>(bytes);
-    }
-
-    // --- run 14 --------------------------------------------------------------
-    {
-        let mut cursor = Cursor::new(bytes.to_vec());
-        let _ = Ntfs::new(&mut cursor);
-
-        let mut mutated = bytes.to_vec();
-        mutated.extend_from_slice(bytes);
-        let mut cursor_mut = Cursor::new(mutated);
-        if let Ok(mut fs) = Ntfs::new(&mut cursor_mut) {
-            if let Err(e) = fs.read_upcase_table(&mut cursor_mut) {
-                eprintln!("Failed to read upcase table: {}", e);
+    for idx in order {
+        match idx {
+            0 => {
+                // --- run 1 ---------------------------------------------------------------
+                {
+                    let mut decoder = DeflateDecoder::new(Cursor::new(bytes));
+                    let _ = io::copy(&mut decoder, &mut io::sink());
+                }
             }
-        } else {
-            eprintln!("Failed to create NTFS filesystem");
-        }
-    }
+            1 => {
+                // --- run 2 ---------------------------------------------------------------
+                {
+                    let _ = Document::load_mem(bytes);
+                }
+            }
+            2 => {
+                // --- run 3 ---------------------------------------------------------------
+                {
+                    let input = Cursor::new(bytes.to_vec());
+                    let mut output = Vec::new();
 
-    // --- run 15 --------------------------------------------------------------
-    {
-        // Intentionally left blank as in source.
+                    if let Ok(reader) = LZ4FrameReader::new(input) {
+                        let _ = reader.into_read().read_to_end(&mut output);
+                    }
+                }
+            }
+            3 => {
+                // --- run 4 ---------------------------------------------------------------
+                {
+                    let compressed = compress_prepend_size(bytes);
+                    let _ = decompress_size_prepended(&compressed);
+                }
+            }
+            4 => {
+                // --- run 8 ---------------------------------------------------------------
+                {
+                    // Original implementation returns immediately; nothing to execute here.
+                }
+            }
+            5 => {
+                // --- run 9 ---------------------------------------------------------------
+                {
+                    let mut cursor = Cursor::new(bytes.to_vec());
+                    let _ = Tag::read_from(&mut cursor);
+                }
+            }
+            6 => {
+                // --- run 10 --------------------------------------------------------------
+                {
+                    let data_str = std::str::from_utf8(bytes).unwrap_or("");
+                    let _ = Parser::new().parse(data_str);
+                }
+            }
+            7 => {
+                // --- run 12 --------------------------------------------------------------
+                {
+                    named!(parser01<&[u8], ()>,
+                        do_parse!(
+                            hdr: take!(1) >>
+                            data: take!(1023) >>
+                            ( () )
+                        )
+                    );
+
+                    let mut buffer = bytes.to_vec();
+                    if buffer.len() < 1024 {
+                        buffer.resize(1024, 0);
+                    }
+                    let _ = parser01(&buffer);
+                }
+            }
+            8 => {
+                // --- run 13 --------------------------------------------------------------
+                {
+                    let _ = npy::from_bytes::<Array>(bytes);
+                }
+            }
+            9 => {
+                // --- run 14 --------------------------------------------------------------
+                {
+                    let mut cursor = Cursor::new(bytes.to_vec());
+                    let _ = Ntfs::new(&mut cursor);
+
+                    let mut mutated = bytes.to_vec();
+                    mutated.extend_from_slice(bytes);
+                    let mut cursor_mut = Cursor::new(mutated);
+                    if let Ok(mut fs) = Ntfs::new(&mut cursor_mut) {
+                        if let Err(e) = fs.read_upcase_table(&mut cursor_mut) {
+                            eprintln!("Failed to read upcase table: {}", e);
+                        }
+                    } else {
+                        eprintln!("Failed to create NTFS filesystem");
+                    }
+                }
+            }
+            10 => {
+                // --- run 15 --------------------------------------------------------------
+                {
+                    // Intentionally left blank as in source.
+                }
+            }
+            _ => unreachable!(),
+        }
     }
 }
 
